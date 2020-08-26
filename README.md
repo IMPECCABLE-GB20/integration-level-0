@@ -22,5 +22,7 @@ Requirements:
 
 Implementation:
 
+The current implementation offers a place where to unify workflow and resource configs across workflows. Ready for subprocess execution.
+
 * Edit `gb20-covid19-0.json`
 * execute `gb20-covid19-0.py`
