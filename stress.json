@@ -1,0 +1,26 @@
+{
+    "wf0" : {
+        "cmd": "/usr/local/bin/stress",
+        "args": [
+            "-t", "60",
+            "-d", "1",
+            "--hdd-bytes", "2M"
+        ]
+    },
+    "wf2" : {
+        "cmd": "/usr/local/bin/stress",
+        "args": [
+            "-t", "60",
+            "-d", "1",
+            "--hdd-bytes", "2M"
+        ]
+    },
+    "wf3" : {
+        "cmd": "/usr/local/bin/stress",
+        "args": [
+            "-t", "60",
+            "-d", "1",
+            "--hdd-bytes", "2M"
+        ]
+    }
+}
