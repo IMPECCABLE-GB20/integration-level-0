@@ -1,0 +1,14 @@
+{
+    "md_counts": 12,
+    "ml_counts": 10,
+    "task_conda_path": "",
+    "task_conda_sh": "/sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh",
+    "base_path": "",
+    "outlier_filepath": "",
+
+    "CUR_STAGE": 0,
+    "MAX_STAGE": 10,
+    "RETRAIN_FREQ": 5,
+    "LEN_initial": 10,
+    "LEN_iter": 10
+}
