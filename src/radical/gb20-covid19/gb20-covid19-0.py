@@ -10,6 +10,7 @@ import radical.entk as entk
 import wf2
 import wf3
 
+
 # ------------------------------------------------------------------------------
 def check_environment():
     return True
@@ -28,14 +29,14 @@ def get_pilot_description(pdesc):
     return ret
 
 # ------------------------------------------------------------------------------
-def wf2(appman):
+def wf2_run(appman):
     p1 = wf2.generate_training_pipeline()
     pipelines = [p1]
     appman.workflow = pipelines
     appman.run()
 
 # ------------------------------------------------------------------------------
-def wf3(appman):
+def wf3_run(appman):
     esmacs_ties = wf3.EsmacsTies(appman)
     esmacs_ties.wf3()
     esmacs_ties.run()
@@ -48,7 +49,7 @@ if __name__ == '__main__':
     reporter.title('GB20 COVID-19')
 
     # resource specified as argument
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 4:
         cfg_file = sys.argv[1]
         cfg_wf2_file = sys.argv[2]
         cfg_wf3_file = sys.argv[3]
@@ -75,9 +76,9 @@ if __name__ == '__main__':
 
         for wf in cfg['workflows']:
             if wf == 'wf2':
-                wf2(appman)
+                wf2_run(appman)
             elif wf == 'wf3':
-                wf3(appman)
+                wf3_run(appman)
             else:
                 raise Exception("ERROR: unrecognized workflow %s" % wf)
 
