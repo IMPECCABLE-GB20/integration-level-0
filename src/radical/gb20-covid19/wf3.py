@@ -10,7 +10,7 @@ class EsmacsTies(object):
         self.base_dir = cfg['work_dir']+'/'+cfg['proj']
         self.run_dir = cfg['run_dir']
         self.conda_init = cfg['conda_init']
-        self.esmacs_tenv = cfg['self.conda_esmacs_task_env']
+        self.esmacs_tenv = cfg['conda_esmacs_task_env']
         self.esmacs_tmodules = cfg['esmacs_task_modules']
         self.am = appman
         self.pipelines = []

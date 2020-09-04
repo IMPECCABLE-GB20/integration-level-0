@@ -1,9 +1,9 @@
 {
-    "protein": ,
+    "protein": "",
     "md_counts": 12,
     "ml_counts": 10,
-    "pdb_path": ,
-    "ref_path": ,
+    "pdb_path": "",
+    "ref_path": "",
 
     "task_conda_path": "",
     "task_conda_sh": "/sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh",

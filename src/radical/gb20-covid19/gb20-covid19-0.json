@@ -9,6 +9,6 @@
         "gpus_node": 6,
         "project"  : "MED110"
     },
-    #"workflows": ["wf2", "wf3"]
-    "workflows": ["wf2"]
+    #"workflows": ["wf2", "wf3"],
+    "workflows": ["wf3"]
 }
