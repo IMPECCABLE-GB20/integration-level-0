@@ -1,6 +1,6 @@
 import os, glob
 import argparse, sys
-from radical.entk import Pipeline, Stage, Task
+from radical.entk import Pipeline, Stage, Task, AppManager
 
 class EsmacsTies(object):
 
@@ -98,9 +98,9 @@ class EsmacsTies(object):
                 }
                 getattr(self,rct_stage).add_tasks(t)
 
-    def run(self):
-        self.am.workflow = self.pipelines#[self.p]
-        self.am.run()
+#    def run(self):
+#        self.am.workflow = self.pipelines#[self.p]
+#        self.am.run()
 
     def wf3(self):
         '''self.p1 = Pipeline()
@@ -123,6 +123,8 @@ class EsmacsTies(object):
         self.p1.add_stages(self.s3)
 
         self.pipelines.append(self.p1)
+
+        return self.pipelines
 
     # def wf4(self, calc="com", ncores="35"):
     #     '''self.p2 = Pipeline()
