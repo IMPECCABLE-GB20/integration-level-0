@@ -37,6 +37,7 @@ def esmacs(names, stage, outdir="equilibration"):
                 'threads_per_process': 1,
                 'thread_type': 'CUDA'}
             s.add_tasks(t)
+            print("DEBUG: %s" % len(rct_stage._tasks))
 
     return s
 
