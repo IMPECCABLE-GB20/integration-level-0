@@ -5,9 +5,12 @@ from radical.entk import Pipeline, Stage, Task
 def esmacs(names, stage, outdir="equilibration"):
 
     s = Stage()
+    print("DEBUG:instantiation:  %s" % len(s._tasks))
 
     for comp in names:
+        print("DEBUG:first loop: %s" % len(s._tasks))
         for i in range(1, 13):
+            print("DEBUG:second loop:start: %s" % len(s._tasks))
             t = Task()
 
             t.pre_exec = [
@@ -37,7 +40,7 @@ def esmacs(names, stage, outdir="equilibration"):
                 'threads_per_process': 1,
                 'thread_type': 'CUDA'}
             s.add_tasks(t)
-            print("DEBUG: %s" % len(rct_stage._tasks))
+            print("DEBUG:second loop:end: %s" % len(s._tasks))
 
     return s
 
