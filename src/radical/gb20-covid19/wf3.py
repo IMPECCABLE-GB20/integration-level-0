@@ -2,7 +2,7 @@ import glob
 from radical.entk import Pipeline, Stage, Task
 
 
-def esmacs(names, stage, outdir="equilibration", name=None):
+def esmacs(names, stage, outdir="equilibration"):
 
     s = Stage()
 
@@ -11,7 +11,7 @@ def esmacs(names, stage, outdir="equilibration", name=None):
             t = Task()
 
             t.pre_exec = [
-                "export WDIR=\"{}/{}\"".format(run_dir, name),
+                "export WDIR=\"{}/{}\"".format(run_dir, comp),
                 ". {}".format(conda_init),
                 "conda activate {}".format(esmacs_tenv),
                 "module load {}".format(esmacs_tmodules),
@@ -41,7 +41,7 @@ def esmacs(names, stage, outdir="equilibration", name=None):
     return s
 
 
-def wf3(cfg):
+def generate_esmacs(cfg):
 
     base_dir        = cfg['work_dir']+'/'+cfg['proj']
     run_dir         = cfg['run_dir']
@@ -55,13 +55,13 @@ def wf3(cfg):
     p = Pipeline()
     p.name = 'ESMACS'
 
-    s1 = esmacs(esmacs_names, stage="eq1", name=comp)
+    s1 = esmacs(esmacs_names, stage="eq1")
     p.add_stages(s1)
 
-    s2 = esmacs(esmacs_names, stage="eq2", name=comp)
+    s2 = esmacs(esmacs_names, stage="eq2")
     p.add_stages(s2)
 
-    s3 = esmacs(esmacs_names, stage="sim1", outdir="simulation", name=comp)
+    s3 = esmacs(esmacs_names, stage="sim1", outdir="simulation")
     p.add_stages(s3)
 
     return p
