@@ -1,7 +1,6 @@
 #Summit stack
 module load python/3.7.0
 module load py-virtualenv/16.0.0
-module load py-setuptools/40.4.3-py3
 module load zeromq
 module load vim
 . /ccs/home/mturilli1/gb20/integration-level-0/ve/gb20-integration-0/bin/activate
