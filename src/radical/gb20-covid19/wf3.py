@@ -4,7 +4,7 @@ from radical.entk import Pipeline, Stage, Task
 
 class EsmacsTies(object):
 
-    def __init__(self, appman, cfg):
+    def __init__(self, cfg):
         #self.set_argparse()
         #self._set_rmq()
         self.base_dir = cfg['work_dir']+'/'+cfg['proj']
@@ -12,7 +12,7 @@ class EsmacsTies(object):
         self.conda_init = cfg['conda_init']
         self.esmacs_tenv = cfg['conda_esmacs_task_env']
         self.esmacs_tmodules = cfg['esmacs_task_modules']
-        self.am = appman
+        # self.am = appman
         self.pipelines = []
         self.p1 = Pipeline()
         self.p2 = Pipeline()
@@ -44,8 +44,7 @@ class EsmacsTies(object):
     #         parser.print_help()
     #         sys.exit(-1)
 
-    def esmacs(self, rct_stage="s1", stage="eq1", outdir="equilibration",
-               name=None):
+    def esmacs(self, rct_stage, stage, outdir="equilibration", name=None):
 
         for i in range(1, 13):
             t = Task()
@@ -73,34 +72,34 @@ class EsmacsTies(object):
                 'process_type': None,
                 'threads_per_process': 1,
                 'thread_type': 'CUDA'}
-            getattr(self,rct_stage).add_tasks(t)
+            self.rct_stage.add_tasks(t)
 
-    def ties(self, calc, ncores, rct_stage="s4", stage="eq0",
-             outdir="equilibration", name=None):
+    # def ties(self, calc, ncores, rct_stage="s4", stage="eq0",
+    #          outdir="equilibration", name=None):
 
-        for l in [0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 1.00]:
-            for i in range(1, 6):
-                t = Task()
-                t.pre_exec = [
-                    "module load spectrum-mpi/10.3.1.2-20200121 fftw/3.3.8",
-                    "cd $MEMBERWORK/med110/test_hybridwf/{}/{}/replica-confs".format(name, calc),
-                    "mkdir -p ../LAMBDA_{:.2f}/rep{}/{}".format(l, i, outdir),
-                    "export OMP_NUM_THREADS=1"
-                    ]
-                t.executable = '/gpfs/alpine/world-shared/bip115/NAMD_binaries/summit/NAMD_LATEST_Linux-POWER-MPI-smp-Summit/namd2'
-                t.arguments = ['+ppn', '41', '--tclmain', '{}.conf'.format(stage), '{:.2f}'.format(l), '{}'.format(i)]#'{}'.format(ncores)
-                t.post_exec = []
-                t.cpu_reqs = {
-                    'processes': 1,
-                    'process_type': None,#'MPI'
-                    'threads_per_process': 4*int(ncores),#amounts to 35 cores per node (out of 41 usable cores)
-                    'thread_type': 'OpenMP'
-                }
-                getattr(self,rct_stage).add_tasks(t)
+    #     for l in [0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 1.00]:
+    #         for i in range(1, 6):
+    #             t = Task()
+    #             t.pre_exec = [
+    #                 "module load spectrum-mpi/10.3.1.2-20200121 fftw/3.3.8",
+    #                 "cd $MEMBERWORK/med110/test_hybridwf/{}/{}/replica-confs".format(name, calc),
+    #                 "mkdir -p ../LAMBDA_{:.2f}/rep{}/{}".format(l, i, outdir),
+    #                 "export OMP_NUM_THREADS=1"
+    #                 ]
+    #             t.executable = '/gpfs/alpine/world-shared/bip115/NAMD_binaries/summit/NAMD_LATEST_Linux-POWER-MPI-smp-Summit/namd2'
+    #             t.arguments = ['+ppn', '41', '--tclmain', '{}.conf'.format(stage), '{:.2f}'.format(l), '{}'.format(i)]#'{}'.format(ncores)
+    #             t.post_exec = []
+    #             t.cpu_reqs = {
+    #                 'processes': 1,
+    #                 'process_type': None,#'MPI'
+    #                 'threads_per_process': 4*int(ncores),#amounts to 35 cores per node (out of 41 usable cores)
+    #                 'thread_type': 'OpenMP'
+    #             }
+    #             getattr(self,rct_stage).add_tasks(t)
 
-    def run(self):
-        self.am.workflow = self.pipelines#[self.p]
-        self.am.run()
+    # def run(self):
+    #     self.am.workflow = self.pipelines    #[self.p]
+    #     self.am.run()
 
     def wf3(self):
         '''self.p1 = Pipeline()
@@ -111,18 +110,20 @@ class EsmacsTies(object):
 
         esmacs_names = glob.glob("{}/input/lig*".format(self.run_dir))
         for comp in esmacs_names:
-            self.esmacs(name=comp)
+            self.esmacs(rct_stage=self.s1, stage="eq1", name=comp)
         self.p1.add_stages(self.s1)
 
         for comp in esmacs_names:
-            self.esmacs(rct_stage="s2", stage="eq2", name=comp)
+            self.esmacs(rct_stage=self.s2, stage="eq2", name=comp)
         self.p1.add_stages(self.s2)
 
         for comp in esmacs_names:
-            self.esmacs(rct_stage="s3", stage="sim1", outdir="simulation", name=comp)
+            self.esmacs(rct_stage=self.s3, stage="sim1", outdir="simulation", name=comp)
         self.p1.add_stages(self.s3)
 
         self.pipelines.append(self.p1)
+
+        return self.pipelines
 
     # def wf4(self, calc="com", ncores="35"):
     #     '''self.p2 = Pipeline()
