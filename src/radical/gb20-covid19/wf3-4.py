@@ -73,6 +73,7 @@ class EsmacsTies(object):
                 'threads_per_process': 1,
                 'thread_type': 'CUDA'}
             getattr(self,rct_stage).add_tasks(t)
+            print(getattr(self,rct_stage).to_dict())
 
     # def ties(self, calc, ncores, rct_stage="s4", stage="eq0",
     #          outdir="equilibration", name=None):
