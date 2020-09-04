@@ -37,8 +37,9 @@ def wf2_run(appman):
 
 # ------------------------------------------------------------------------------
 def wf3_run(appman, cfg):
-    esmacs = wf3.EsmacsTies(cfg)
-    appman.workflow = esmacs.wf3()
+    p1 = wf3.generate_esmacs(cfg)
+    pipelines = [p1]
+    appman.workflow = pipelines
     appman.run()
 
 
