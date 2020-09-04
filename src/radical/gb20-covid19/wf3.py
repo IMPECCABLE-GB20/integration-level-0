@@ -3,14 +3,14 @@ import argparse, sys
 
 class EsmacsTies(object):
 
-    def __init__(self, appman, fconf):
+    def __init__(self, appman, cfg):
         #self.set_argparse()
         #self._set_rmq()
-        self.base_dir = fconf['work_dir']+'/'+fconf['proj']
-        self.run_dir = fconf['run_dir']
-        self.conda_init = fconf['conda_init']
-        self.esmacs_tenv = fconf['self.conda_esmacs_task_env']
-        self.esmacs_tmodules = fconf['esmacs_task_modules']
+        self.base_dir = cfg['work_dir']+'/'+cfg['proj']
+        self.run_dir = cfg['run_dir']
+        self.conda_init = cfg['conda_init']
+        self.esmacs_tenv = cfg['self.conda_esmacs_task_env']
+        self.esmacs_tmodules = cfg['esmacs_task_modules']
         self.am = appman
         self.pipelines = []
         self.p1 = entk.Pipeline()

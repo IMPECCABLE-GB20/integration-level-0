@@ -36,8 +36,8 @@ def wf2_run(appman):
     appman.run()
 
 # ------------------------------------------------------------------------------
-def wf3_run(appman):
-    esmacs_ties = wf3.EsmacsTies(appman)
+def wf3_run(appman, cfg):
+    esmacs_ties = wf3.EsmacsTies(appman, cfg)
     esmacs_ties.wf3()
     esmacs_ties.run()
 
@@ -78,7 +78,7 @@ if __name__ == '__main__':
             if wf == 'wf2':
                 wf2_run(appman)
             elif wf == 'wf3':
-                wf3_run(appman)
+                wf3_run(appman, cfg_wf3)
             else:
                 raise Exception("ERROR: unrecognized workflow %s" % wf)
 
