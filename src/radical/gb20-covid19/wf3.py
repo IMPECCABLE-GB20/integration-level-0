@@ -1,5 +1,6 @@
 import os, glob
 import argparse, sys
+from radical.entk import Pipeline, Stage, Task
 
 class EsmacsTies(object):
 
@@ -13,15 +14,15 @@ class EsmacsTies(object):
         self.esmacs_tmodules = cfg['esmacs_task_modules']
         self.am = appman
         self.pipelines = []
-        self.p1 = entk.Pipeline()
-        self.p2 = entk.Pipeline()
-        self.s1 = entk.Stage()
-        self.s2 = entk.Stage()
-        self.s3 = entk.Stage()
-        self.s4 = entk.Stage()
-        self.s5 = entk.Stage()
-        self.s6 = entk.Stage()
-        self.s7 = entk.Stage()
+        self.p1 = Pipeline()
+        self.p2 = Pipeline()
+        self.s1 = Stage()
+        self.s2 = Stage()
+        self.s3 = Stage()
+        self.s4 = Stage()
+        self.s5 = Stage()
+        self.s6 = Stage()
+        self.s7 = Stage()
 
     # def _set_rmq(self):
     #     self.rmq_port = int(os.environ.get('RMQ_PORT', 5672))
@@ -47,7 +48,7 @@ class EsmacsTies(object):
                name=None):
 
         for i in range(1, 13):
-            t = entk.Task()
+            t = Task()
             t.pre_exec = [
                 "export WDIR=\"{}/{}\"".format(self.run_dir, name),
                 ". {}".format(self.conda_init),
@@ -79,7 +80,7 @@ class EsmacsTies(object):
 
         for l in [0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 1.00]:
             for i in range(1, 6):
-                t = entk.Task()
+                t = Task()
                 t.pre_exec = [
                     "module load spectrum-mpi/10.3.1.2-20200121 fftw/3.3.8",
                     "cd $MEMBERWORK/med110/test_hybridwf/{}/{}/replica-confs".format(name, calc),
@@ -102,11 +103,11 @@ class EsmacsTies(object):
         self.am.run()
 
     def wf3(self):
-        '''self.p1 = entk.Pipeline()
+        '''self.p1 = Pipeline()
         pipelines.append(self.p1)
-        self.s1 = entk.Stage()
-        self.s2 = entk.Stage()
-        self.s3 = entk.Stage()'''
+        self.s1 = Stage()
+        self.s2 = Stage()
+        self.s3 = Stage()'''
 
         esmacs_names = glob.glob("{}/input/lig*".format(self.run_dir))
         for comp in esmacs_names:
@@ -124,12 +125,12 @@ class EsmacsTies(object):
         self.pipelines.append(self.p1)
 
     # def wf4(self, calc="com", ncores="35"):
-    #     '''self.p2 = entk.Pipeline()
+    #     '''self.p2 = Pipeline()
     #     pipelines.append(self.p2)
-    #     self.s4 = entk.Stage()
-    #     self.s5 = entk.Stage()
-    #     self.s6 = entk.Stage()
-    #     self.s7 = entk.Stage()'''
+    #     self.s4 = Stage()
+    #     self.s5 = Stage()
+    #     self.s6 = Stage()
+    #     self.s7 = Stage()'''
 
     #     ties_names = glob.glob("input/ties-*")
 
