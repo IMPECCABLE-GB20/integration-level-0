@@ -49,18 +49,17 @@ def wf3(cfg):
 
     s1 = Stage()
     for comp in esmacs_names:
-        esmacs(rct_stage="s1", stage="eq1", name=comp)
+        esmacs(rct_stage=s1, stage="eq1", name=comp)
     p.add_stages(s1)
 
     s2 = Stage()
     for comp in esmacs_names:
-        esmacs(rct_stage="s2", stage="eq2", name=comp)
+        esmacs(rct_stage=s2, stage="eq2", name=comp)
     p.add_stages(s2)
 
     s3 = Stage()
     for comp in esmacs_names:
-        esmacs(rct_stage="s3", stage="sim1", outdir="simulation",
-                    name=comp)
+        esmacs(rct_stage=s3, stage="sim1", outdir="simulation", name=comp)
     p.add_stages(s3)
 
     return p
