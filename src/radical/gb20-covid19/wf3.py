@@ -71,6 +71,7 @@ class EsmacsTies(object):
                 'processes': 1,
                 'process_type': None,
                 'threads_per_process': 1,
+                'thread_type': 'CUDA'}
             self.rct_stage.add_tasks(t)
 
     # def ties(self, calc, ncores, rct_stage="s4", stage="eq0",
