@@ -3,9 +3,14 @@ import argparse, sys
 
 class EsmacsTies(object):
 
-    def __init__(self, appman):
+    def __init__(self, appman, fconf):
         #self.set_argparse()
         #self._set_rmq()
+        self.base_dir = fconf['work_dir']+'/'+fconf['proj']
+        self.run_dir = fconf['run_dir']
+        self.conda_init = fconf['conda_init']
+        self.esmacs_tenv = fconf['self.conda_esmacs_task_env']
+        self.esmacs_tmodules = fconf['esmacs_task_modules']
         self.am = appman
         self.pipelines = []
         self.p1 = entk.Pipeline()
@@ -44,16 +49,17 @@ class EsmacsTies(object):
         for i in range(1, 13):
             t = entk.Task()
             t.pre_exec = [
-                "export WDIR=\"$MEMBERWORK/med110/test_hybridwf/{}\"".format(name),
-                ". /ccs/home/litan/miniconda3/etc/profile.d/conda.sh",
-                "conda activate wf3",
-                "module load cuda/10.1.243 gcc/7.4.0 spectrum-mpi/10.3.1.2-20200121",
+                "export WDIR=\"{}/{}\"".format(self.run_dir, name),
+                ". {}".format(self.conda_init),
+                "conda activate {}".format(self.esmacs_tenv),
+                "module load {}".format(self.esmacs_tmodules),
                 "mkdir -p $WDIR/replicas/rep{}/{}".format(i, outdir),
                 "cd $WDIR/replicas/rep{}/{}".format(i, outdir),
                 "rm -f {}.log {}.xml {}.dcd {}.chk".format(stage, stage, stage, stage),
                 "export OMP_NUM_THREADS=1"
                 ]
-            t.executable = '/ccs/home/litan/miniconda3/envs/wf3/bin/python3.7'
+            # t.executable = '/ccs/home/litan/miniconda3/envs/wf3/bin/python3.7'
+            t.executable = 'python3'
             t.arguments = ['$WDIR/{}.py'.format(stage)]
             t.post_exec = []
             t.cpu_reqs = {
@@ -102,7 +108,7 @@ class EsmacsTies(object):
         self.s2 = entk.Stage()
         self.s3 = entk.Stage()'''
 
-        esmacs_names = glob.glob("input/lig*")
+        esmacs_names = glob.glob("{}/input/lig*".format(self.run_dir))
         for comp in esmacs_names:
             self.esmacs(name=comp)
         self.p1.add_stages(self.s1)
