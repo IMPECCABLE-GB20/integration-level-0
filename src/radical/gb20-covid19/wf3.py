@@ -72,7 +72,7 @@ class EsmacsTies(object):
                 'process_type': None,
                 'threads_per_process': 1,
                 'thread_type': 'CUDA'}
-            self.rct_stage.add_tasks(t)
+            getattr(self,rct_stage).add_tasks(t)
 
     # def ties(self, calc, ncores, rct_stage="s4", stage="eq0",
     #          outdir="equilibration", name=None):
@@ -110,15 +110,16 @@ class EsmacsTies(object):
 
         esmacs_names = glob.glob("{}/input/lig*".format(self.run_dir))
         for comp in esmacs_names:
-            self.esmacs(rct_stage=self.s1, stage="eq1", name=comp)
+            self.esmacs(rct_stage="s1", stage="eq1", name=comp)
         self.p1.add_stages(self.s1)
 
         for comp in esmacs_names:
-            self.esmacs(rct_stage=self.s2, stage="eq2", name=comp)
+            self.esmacs(rct_stage="s2", stage="eq2", name=comp)
         self.p1.add_stages(self.s2)
 
         for comp in esmacs_names:
-            self.esmacs(rct_stage=self.s3, stage="sim1", outdir="simulation", name=comp)
+            self.esmacs(rct_stage="s3", stage="sim1", outdir="simulation",
+                        name=comp)
         self.p1.add_stages(self.s3)
 
         self.pipelines.append(self.p1)
