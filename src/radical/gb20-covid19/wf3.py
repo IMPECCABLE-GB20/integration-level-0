@@ -2,7 +2,7 @@ import glob
 from radical.entk import Pipeline, Stage, Task
 
 
-def esmacs(names, stage, outdir="equilibration"):
+def esmacs(cfg, names, stage, outdir="equilibration"):
 
     s = Stage()
     print("DEBUG:instantiation:  %s" % len(s._tasks))
@@ -14,10 +14,10 @@ def esmacs(names, stage, outdir="equilibration"):
             t = Task()
 
             t.pre_exec = [
-                "export WDIR=\"{}/{}\"".format(run_dir, comp),
-                ". {}".format(conda_init),
-                "conda activate {}".format(esmacs_tenv),
-                "module load {}".format(esmacs_tmodules),
+                "export WDIR=\"{}\"".format(comp),
+                ". {}".format(cfg['conda_init']),
+                "conda activate {}".format(cfg['conda_esmacs_task_env']),
+                "module load {}".format(cfg['esmacs_task_modules']),
                 "mkdir -p $WDIR/replicas/rep{}/{}".format(i, outdir),
                 "cd $WDIR/replicas/rep{}/{}".format(i, outdir),
                 "rm -f {}.log {}.xml {}.dcd {}.chk".format(stage, stage, stage, stage),
@@ -47,25 +47,23 @@ def esmacs(names, stage, outdir="equilibration"):
 
 def generate_esmacs(cfg):
 
-    base_dir        = cfg['work_dir']+'/'+cfg['proj']
-    run_dir         = cfg['run_dir']
-    conda_init      = cfg['conda_init']
-    esmacs_tenv     = cfg['conda_esmacs_task_env']
-    esmacs_tmodules = cfg['esmacs_task_modules']
+    cfg['base_dir'] = cfg['work_dir']+'/'+cfg['proj']
+    cfg['run_dir']  = cfg['base_dir']+'/'+cfg['data_dir']
 
-    esmacs_names = glob.glob("{}/input/lig*".format(run_dir))
-
+    esmacs_names = glob.glob("{}/input/lig*".format(cfg['run_dir']))
+    print("{}/input/lig*".format(cfg['run_dir']))
+    print("DEBUG:generate_esmacs:esmacs_names %s" % esmacs_names)
 
     p = Pipeline()
     p.name = 'ESMACS'
 
-    s1 = esmacs(esmacs_names, stage="eq1")
+    s1 = esmacs(cfg, esmacs_names, stage="eq1")
     p.add_stages(s1)
 
-    s2 = esmacs(esmacs_names, stage="eq2")
+    s2 = esmacs(cfg, esmacs_names, stage="eq2")
     p.add_stages(s2)
 
-    s3 = esmacs(esmacs_names, stage="sim1", outdir="simulation")
+    s3 = esmacs(cfg, esmacs_names, stage="sim1", outdir="simulation")
     p.add_stages(s3)
 
     return p
