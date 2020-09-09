@@ -5,12 +5,12 @@ from radical.entk import Pipeline, Stage, Task
 def esmacs(cfg, names, stage, outdir="equilibration"):
 
     s = Stage()
-    print("DEBUG:instantiation:  %s" % len(s._tasks))
+    #print("DEBUG:instantiation:  %s" % len(s._tasks))
 
     for comp in names:
-        print("DEBUG:first loop: %s" % len(s._tasks))
+        #print("DEBUG:first loop: %s" % len(s._tasks))
         for i in range(1, 13):
-            print("DEBUG:second loop:start: %s" % len(s._tasks))
+            #print("DEBUG:second loop:start: %s" % len(s._tasks))
             t = Task()
 
             t.pre_exec = [
@@ -23,7 +23,6 @@ def esmacs(cfg, names, stage, outdir="equilibration"):
                 "rm -f {}.log {}.xml {}.dcd {}.chk".format(stage, stage, stage, stage),
                 "export OMP_NUM_THREADS=1"]
 
-            # t.executable = '/ccs/home/litan/miniconda3/envs/wf3/bin/python3.7'
             t.executable = 'python3'
             t.arguments = ['$WDIR/{}.py'.format(stage)]
             t.post_exec = []
@@ -40,7 +39,7 @@ def esmacs(cfg, names, stage, outdir="equilibration"):
                 'threads_per_process': 1,
                 'thread_type': 'CUDA'}
             s.add_tasks(t)
-            print("DEBUG:second loop:end: %s" % len(s._tasks))
+            #print("DEBUG:second loop:end: %s" % len(s._tasks))
 
     return s
 
@@ -51,8 +50,8 @@ def generate_esmacs(cfg):
     cfg['run_dir']  = cfg['base_dir']+'/'+cfg['data_dir']
 
     esmacs_names = glob.glob("{}/input/lig*".format(cfg['run_dir']))
-    print("{}/input/lig*".format(cfg['run_dir']))
-    print("DEBUG:generate_esmacs:esmacs_names %s" % esmacs_names)
+    #print("{}/input/lig*".format(cfg['run_dir']))
+    #print("DEBUG:generate_esmacs:esmacs_names %s" % esmacs_names)
 
     p = Pipeline()
     p.name = 'ESMACS'
