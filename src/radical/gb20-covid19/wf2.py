@@ -130,40 +130,41 @@ def generate_training_pipeline():
         t2 = Task()
         # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/MD_to_CVAE/MD_to_CVAE.py
         t2.pre_exec = []
-        t2.pre_exec += ['export LC_ALL=de_DE.utf-8']
-        t2.pre_exec += ['export LANG=de_DE.utf-8']
         t2.pre_exec += ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
-        t2.pre_exec += [f'conda activate {conda_pytorch}']
+        t2.pre_exec += [f'conda activate {conda_openmm}']
         # preprocessing for molecules' script, it needs files in a single
         # directory
         # the following pre-processing does:
         # 1) find all (.dcd) files from openmm results
         # 2) create a temp directory
         # 3) symlink them in the temp directory
-        list_of_dcds = glob.glob(f'{base_path}/MD_exps/{protein}/omm_runs*/*.dcd')
-        aggregated_temp_path = tempfile.mkdtemp(dir=f'{base_path}/MD_to_CVAE',
-                prefix='{}-'.format(len(list_of_dcds)))
-        for i in list_of_dcds:
-            new_name_from_omm_directory = os.path.basename(os.path.dirname(i))
-            os.symlink(i, '{}/{}.dcd'.format(aggregated_temp_path,
-                new_name_from_omm_directory))
 
-        sparse_matrix_path = f'{aggregated_temp_path}/{protein}.h5'
-        t2.executable = [f'{conda_pytorch}/bin/python']  # MD_to_CVAE.py
+        t2.pre_exec = [ f'export dcd_list=(`ls {base_path}/MD_exps/adrp/omm_runs_*/*dcd`)',
+                f'export tmp_path=`mktemp -p {base_path}/MD_to_CVAE/ -d`',
+                'for dcd in ${dcd_list[@]}; do tmp=$(basename $(dirname $dcd)); ln -s $dcd $tmp_path/$tmp.dcd; done']
+
+        sparse_matrix_path = f'{base_path}/MD_to_CVAE/adrp.h5'
+        t2.executable = [f'{conda_openmm}/bin/python']  # MD_to_CVAE.py
         t2.arguments = [
                 f'{molecules_path}/scripts/traj_to_dset.py',
-                '-t', aggregated_temp_path,
-                '-p', pdb_path,
-                '-r', pdb_path,
+                '-t', '$tmp_path',
+                '-p', f'{base_path}/Parameters/input_adrp/prot.pdb',
+                '-r', f'{base_path}/Parameters/input_adrp/prot.pdb',
                 '-o', sparse_matrix_path,
                 '--rmsd',
                 '--fnc',
                 '--contact_map',
                 '--point_cloud',
-                '--num_workers', '1'
+                '--num_workers', 42
                 ]
 
         # Add the aggregation task to the aggreagating stage
+        t2.cpu_reqs = {'processes': 1,
+                'process_type': None,
+                'threads_per_process': 164,
+                'thread_type': 'OpenMP'
+        }
+
         s2.add_tasks(t2)
         return s2
 
@@ -176,6 +177,8 @@ def generate_training_pipeline():
         s3.name = 'learning'
 
         global sparse_matrix_path
+        if sparse_matrix_path is None:
+            sparse_matrix_path = f'{base_path}/MD_to_CVAE/adrp.h5'
 
         # learn task
         time_stamp = int(time.time())
@@ -191,40 +194,51 @@ def generate_training_pipeline():
                     'export LC_ALL=en_US.utf-8'
                     ]
             t3.pre_exec += ['conda activate %s' % conda_pytorch]
+            t3.pre_exec += \
+            ['PYTHONPATH=/ccs/home/hrlee/.local/lib/python3.6/site-packages:$PYTHONPATH']
 
             dim = i + 3
             cvae_dir = 'cvae_runs_%.2d_%d' % (dim, time_stamp+i)
+            run_dir = 'runs/cmaps-adrp-summit-1'
             t3.pre_exec += [f'cd {base_path}/CVAE_exps']
             t3.pre_exec += ['mkdir -p {0} && cd {0}'.format(cvae_dir)]
-            t3.executable = [f'{conda_pytorch}/bin/python']  # train_cvae.py
-            t3.arguments = [
-                    f'{molecules_path}/examples/example_vae.py',
-                    '-i', sparse_matrix_path,
-                    '-o', './',
-                    '--model_id', cvae_dir,
-                    # fs-pep
-                    '--dim1', 22,
-                    '--dim2', 22,
-                    '-d', 11,
-                    #'-s',      # sparse matrix
-                    '--amp',    #pytorch apex
-                    '-b', 256, # batch size
-                    '-e', 100  # epoch
-                    ]
+            t3.pre_exec += ['unset CUDA_VISIBLE_DEVICES', 'export OMP_NUM_THREADS=4']
+            nnodes = node_counts // num_ML
+            t3.executable= [f'cat /dev/null;jsrun -n {nnodes} -r 1 -g 6 -a 3 -c 42 -d packed '
+            + f'{molecules_path}/examples/run_vae_dist_summit.sh {sparse_matrix_path} ./ {cvae_dir} sparse-concat resnet 168 168 21 amp distributed {batch_size} {epoch} 3']
+            #+ f'{molecules_path}/examples/run_vae_dist_summit.sh -i {sparse_matrix_path} -o ./ --model_id {cvae_dir} -f sparse-concat -t resnet --dim1 168 --dim2 168 -d 21 --amp --distributed -b {batch_size} -e {epoch} -S 3']
+        #     ,
+        #             '-i', sparse_matrix_path,
+        #             '-o', './',
+        #             '--model_id', cvae_dir,
+        #             '-f', 'sparse-concat',
+        #             '-t', 'resnet',
+        #             # fs-pep
+        #             '--dim1', 168,
+        #             '--dim2', 168,
+        #             '-d', 21,
+        #             '--amp',      # sparse matrix
+        #             '--distributed',
+        #             '-b', batch_size, # batch size
+        #             '-e', epoch,# epoch
+        #             '-S', 3
+        #             ]
 
-            t3.cpu_reqs = {'processes': 1,
-                           'process_type': None,
+            t3.cpu_reqs = {'processes': 41 * nnodes,
+                           'process_type': 'MPI',
                     'threads_per_process': 4,
                     'thread_type': 'OpenMP'
                     }
-            t3.gpu_reqs = {'processes': 1,
-                           'process_type': None,
-                    'threads_per_process': 1,
-                    'thread_type': 'CUDA'
-                    }
+            #t3.gpu_reqs = {'processes': 3,
+            #               'process_type': None,
+            #        'threads_per_process': 2,
+            #        'thread_type': 'CUDA'
+            #        }
 
             # Add the learn task to the learning stage
             s3.add_tasks(t3)
+            s3.post_exec = func_condition
+            # TODO
         return s3
 
 
@@ -296,14 +310,13 @@ def generate_training_pipeline():
 
         # --------------------------
         # Outlier identification stage
-        s4 = generate_interfacing_stage()
-        p.add_stages(s4)
+        #s4 = generate_interfacing_stage()
+        #p.add_stages(s4)
 
         CUR_STAGE += 1
 
     def func_on_false():
         print ('Done')
-
 
 
     global CUR_STAGE
