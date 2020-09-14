@@ -14,5 +14,8 @@
     "MAX_STAGE": 10,
     "RETRAIN_FREQ": 5,
     "LEN_initial": 10,
-    "LEN_iter": 10
+    "LEN_iter": 10,
+
+    "outlier_path": "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Outlier_search/outlier_pdbs/",
+    "top_path": "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Outlier_search/outlier_pdbs/Parameters/"
 }

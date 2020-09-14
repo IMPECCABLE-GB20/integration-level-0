@@ -31,8 +31,23 @@ def get_pilot_description(pdesc):
 # ------------------------------------------------------------------------------
 def wf2_run(appman):
     p1 = wf2.generate_training_pipeline()
-    pipelines = [p1]
-    appman.workflow = pipelines
+    appman.workflow = [p1]
+    appman.run()
+
+# ------------------------------------------------------------------------------
+def get_wf3_input(appman, cfg):
+    p = Pipeline()
+    p.name = 'get_wf3_input'
+    s = Stage()
+
+    t = Task()
+    t.executable = ['python3']
+    t.arguments = ['-f', cfg['outlier_path'], '-p', cfg['top_path']]
+
+    s.add_tasks(t)
+    p.add_stages(s)
+    appman.workflow = [p]
+
     appman.run()
 
 # ------------------------------------------------------------------------------
@@ -78,6 +93,7 @@ if __name__ == '__main__':
             if wf == 'wf2':
                 wf2_run(appman)
             elif wf == 'wf3':
+                get_wf3_input(appman, cfg_wf3)
                 wf3_run(appman, cfg_wf3)
             else:
                 raise Exception("ERROR: unrecognized workflow %s" % wf)
