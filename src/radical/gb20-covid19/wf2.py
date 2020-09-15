@@ -1,6 +1,9 @@
 import os, json, time
 import tempfile, glob
+import radical.utils as ru
+
 from radical.entk import Pipeline, Stage, Task, AppManager
+
 
 # Assumptions:
 # - # of MD steps: 2
@@ -15,40 +18,39 @@ from radical.entk import Pipeline, Stage, Task, AppManager
 # [1] https://www.olcf.ornl.gov/for-users/system-user-guides/summit/summit-user-guide/scheduling-policy
 # [2] https://docs.google.com/document/d/1XFgg4rlh7Y2nckH0fkiZTxfauadZn_zSn3sh51kNyKE/
 #
-'''
-export RADICAL_PILOT_PROFILE=True
-export RADICAL_ENTK_PROFILE=True
-'''
+
+# Resource
+# gpu_per_node = 6
 
 # Job description
-project_name = 'MED110'
-wall_hour = 1
+# project_name = 'MED110'
+# wall_hour = 1
 
 # Simulation
-md_counts = 12
-ml_counts = 10
-protein = 'fs-pep'
-pdb_path = '/gpfs/alpine/med110/scratch/mturilli1/DrugWorkflows/workflow-2/MD_exps/fs-pep/pdb/100-fs-peptide-400K.pdb'
-ref_path = '/gpfs/alpine/med110/scratch/mturilli1/DrugWorkflows/workflow-2/MD_exps/fs-pep/pdb/fs-peptide.pdb'
+# md_counts = 12
+# ml_counts = 10
+# protein = 'fs-pep'
+# pdb_path = '/gpfs/alpine/med110/scratch/mturilli1/DrugWorkflows/workflow-2/MD_exps/fs-pep/pdb/100-fs-peptide-400K.pdb'
+# ref_path = '/gpfs/alpine/med110/scratch/mturilli1/DrugWorkflows/workflow-2/MD_exps/fs-pep/pdb/fs-peptide.pdb'
 
 # Iteration
-CUR_STAGE=0
-MAX_STAGE=10
-RETRAIN_FREQ = 5
+# CUR_STAGE=0
+# MAX_STAGE=10
+# RETRAIN_FREQ = 5
 
-LEN_initial = 10
-LEN_iter = 10
+# LEN_initial = 10
+# LEN_iter = 10
 
 # Conda envs
-conda_path = os.environ.get('CONDA_PREFIX')
-conda_openmm = os.environ.get('CONDA_OPENMM', conda_path)
-conda_pytorch = os.environ.get('CONDA_PYTORCH', conda_path)
+# conda_path = os.environ.get('CONDA_PREFIX')
+# conda_openmm = os.environ.get('CONDA_OPENMM', cfg['conda_path'])
+# conda_pytorch = os.environ.get('CONDA_PYTORCH', cfg['conda_path'])
 #base_path = os.path.abspath('.')
-base_path = os.environ.get('WF2_BASE_PATH')
-molecules_path = os.environ.get('MOLECULES_PATH')
+# base_path = os.environ.get('WF2_BASE_PATH')
+# molecules_path = os.environ.get('MOLECULES_PATH')
 
 
-def generate_training_pipeline():
+def generate_training_pipeline(cfg):
     """
     Function to generate the CVAE_MD pipeline
     """
@@ -60,7 +62,7 @@ def generate_training_pipeline():
         s1 = Stage()
         s1.name = 'MD'
         initial_MD = True
-        outlier_filepath = '%s/Outlier_search/restart_points.json' % base_path
+        outlier_filepath = '%s/Outlier_search/restart_points.json' % cfg['base_path']
 
         if os.path.exists(outlier_filepath):
             initial_MD = False
@@ -72,34 +74,34 @@ def generate_training_pipeline():
         time_stamp = int(time.time())
         for i in range(num_MD):
             t1 = Task()
-            t1.pre_exec = ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
+            t1.pre_exec = ['. %s' % cfg['task_conda_sh']]
             t1.pre_exec += ['module load cuda/9.1.85']
-            t1.pre_exec += ['conda activate %s' % conda_openmm]
+            t1.pre_exec += ['conda activate %s' % cfg['conda_openmm']]
             t1.pre_exec += ['export ' \
                     + 'PYTHONPATH=%s/MD_exps:%s/MD_exps/MD_utils:$PYTHONPATH' %
-                    (base_path, base_path)]
-            t1.pre_exec += ['cd %s/MD_exps/%s' % (base_path, protein)]
+                    (cfg['base_path'], cfg['base_path'])]
+            t1.pre_exec += ['cd %s/MD_exps/%s' % (cfg['base_path'], cfg['protein'])]
             t1.pre_exec += ['mkdir -p omm_runs_%d && cd omm_runs_%d' % (time_stamp+i, time_stamp+i)]
-            t1.executable = ['%s/bin/python' % conda_openmm]  # run_openmm.py
-            t1.arguments = ['%s/MD_exps/%s/run_openmm.py' % (base_path, protein)]
+            t1.executable = ['%s/bin/python' % cfg['conda_openmm']]  # run_openmm.py
+            t1.arguments = ['%s/MD_exps/%s/run_openmm.py' % (cfg['base_path'], cfg['protein'])]
 
 
             # pick initial point of simulation
             if initial_MD or i >= len(outlier_list):
-                t1.arguments += ['--pdb_file', pdb_path ]
+                t1.arguments += ['--pdb_file', cfg['pdb_path'] ]
             elif outlier_list[i].endswith('pdb'):
                 t1.arguments += ['--pdb_file', outlier_list[i]]
                 t1.pre_exec += ['cp %s ./' % outlier_list[i]]
             elif outlier_list[i].endswith('chk'):
-                t1.arguments += ['--pdb_file', pdb_path,
+                t1.arguments += ['--pdb_file', cfg['pdb_path'],
                         '-c', outlier_list[i]]
                 t1.pre_exec += ['cp %s ./' % outlier_list[i]]
 
             # how long to run the simulation
             if initial_MD:
-                t1.arguments += ['--length', LEN_initial]
+                t1.arguments += ['--length', cfg['len_initial']]
             else:
-                t1.arguments += ['--length', LEN_iter]
+                t1.arguments += ['--length', cfg['len_iter']]
 
             # assign hardware the task
             t1.cpu_reqs = {'processes': 1,
@@ -129,9 +131,8 @@ def generate_training_pipeline():
         # Aggregation task
         t2 = Task()
         # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/MD_to_CVAE/MD_to_CVAE.py
-        t2.pre_exec = []
-        t2.pre_exec += ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
-        t2.pre_exec += [f'conda activate {conda_openmm}']
+        t2.pre_exec  = ['. %s' % cfg['task_conda_sh']]
+        t2.pre_exec += ['conda activate %s' % cfg['conda_openmm']]
         # preprocessing for molecules' script, it needs files in a single
         # directory
         # the following pre-processing does:
@@ -139,17 +140,17 @@ def generate_training_pipeline():
         # 2) create a temp directory
         # 3) symlink them in the temp directory
 
-        t2.pre_exec = [ f'export dcd_list=(`ls {base_path}/MD_exps/adrp/omm_runs_*/*dcd`)',
-                f'export tmp_path=`mktemp -p {base_path}/MD_to_CVAE/ -d`',
+        t2.pre_exec = [ f'export dcd_list=(`ls {cfg['base_path']}/MD_exps/adrp/omm_runs_*/*dcd`)',
+                f'export tmp_path=`mktemp -p {cfg['base_path']}/MD_to_CVAE/ -d`',
                 'for dcd in ${dcd_list[@]}; do tmp=$(basename $(dirname $dcd)); ln -s $dcd $tmp_path/$tmp.dcd; done']
 
-        sparse_matrix_path = f'{base_path}/MD_to_CVAE/adrp.h5'
-        t2.executable = [f'{conda_openmm}/bin/python']  # MD_to_CVAE.py
+        sparse_matrix_path = f'{cfg['base_path']}/MD_to_CVAE/adrp.h5'
+        t2.executable = [f'{cfg['conda_openmm']}/bin/python']  # MD_to_CVAE.py
         t2.arguments = [
-                f'{molecules_path}/scripts/traj_to_dset.py',
+                f'{cfg['molecules_path']}/scripts/traj_to_dset.py',
                 '-t', '$tmp_path',
-                '-p', f'{base_path}/Parameters/input_adrp/prot.pdb',
-                '-r', f'{base_path}/Parameters/input_adrp/prot.pdb',
+                '-p', f'{cfg['base_path']}/Parameters/input_adrp/prot.pdb',
+                '-r', f'{cfg['base_path']}/Parameters/input_adrp/prot.pdb',
                 '-o', sparse_matrix_path,
                 '--rmsd',
                 '--fnc',
@@ -178,14 +179,14 @@ def generate_training_pipeline():
 
         global sparse_matrix_path
         if sparse_matrix_path is None:
-            sparse_matrix_path = f'{base_path}/MD_to_CVAE/adrp.h5'
+            sparse_matrix_path = f'{cfg['base_path']}/MD_to_CVAE/adrp.h5'
 
         # learn task
         time_stamp = int(time.time())
         for i in range(num_ML):
             t3 = Task()
             # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/CVAE_exps/train_cvae.py
-            t3.pre_exec = ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
+            t3.pre_exec = ['. %s' % cfg['task_conda_sh']]
             t3.pre_exec += [
                     'module load gcc/7.4.0',
                     'module load cuda/10.1.243',
@@ -193,19 +194,21 @@ def generate_training_pipeline():
                     'export LANG=en_US.utf-8',
                     'export LC_ALL=en_US.utf-8'
                     ]
-            t3.pre_exec += ['conda activate %s' % conda_pytorch]
-            t3.pre_exec += \
-            ['PYTHONPATH=/ccs/home/hrlee/.local/lib/python3.6/site-packages:$PYTHONPATH']
+            t3.pre_exec += ['conda activate %s' % cfg['conda_pytorch']]
+            # t3.pre_exec += ['PYTHONPATH=/ccs/home/hrlee/.local/lib/python3.6/site-packages:$PYTHONPATH']
 
             dim = i + 3
             cvae_dir = 'cvae_runs_%.2d_%d' % (dim, time_stamp+i)
             run_dir = 'runs/cmaps-adrp-summit-1'
-            t3.pre_exec += [f'cd {base_path}/CVAE_exps']
+
+            t3.pre_exec = ['cd %s/CVAE_exps' % cfg['base_path']]
             t3.pre_exec += ['mkdir -p {0} && cd {0}'.format(cvae_dir)]
             t3.pre_exec += ['unset CUDA_VISIBLE_DEVICES', 'export OMP_NUM_THREADS=4']
-            nnodes = node_counts // num_ML
-            t3.executable= [f'cat /dev/null;jsrun -n {nnodes} -r 1 -g 6 -a 3 -c 42 -d packed '
-            + f'{molecules_path}/examples/run_vae_dist_summit.sh {sparse_matrix_path} ./ {cvae_dir} sparse-concat resnet 168 168 21 amp distributed {batch_size} {epoch} 3']
+            nnodes = cfg['node_counts'] // num_ML
+
+            t3.executable= [
+                'cat /dev/null; jsrun -n %s -r 1 -g 6 -a 3 -c 42 -d packed %s/examples/run_vae_dist_summit.sh %s ./ %s sparse-concat resnet 168 168 21 amp distributed %s %s 3' % (nnodes, cfg['molecules_path'], sparse_matrix_path, cvae_dir, cfg['batch_size'], cfg['epoch'])]
+
             #+ f'{molecules_path}/examples/run_vae_dist_summit.sh -i {sparse_matrix_path} -o ./ --model_id {cvae_dir} -f sparse-concat -t resnet --dim1 168 --dim2 168 -d 21 --amp --distributed -b {batch_size} -e {epoch} -S 3']
         #     ,
         #             '-i', sparse_matrix_path,
@@ -251,16 +254,16 @@ def generate_training_pipeline():
         t4.pre_exec = []
         t4.pre_exec += ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
         t4.pre_exec += ['module load cuda/9.1.85']
-        t4.pre_exec += ['conda activate %s' % conda_path]
+        t4.pre_exec += ['conda activate %s' % cfg['conda_path']]
 
         t4.pre_exec += ['export ' \
                 + 'PYTHONPATH=%s/CVAE_exps:%s/CVAE_exps/cvae:$PYTHONPATH' %
-                (base_path, base_path)]
-        t4.pre_exec += ['cd %s/Outlier_search' % base_path]
-        t4.executable = ['%s/bin/python' % conda_path]
-        t4.arguments = ['outlier_locator.py', '--md', f'../MD_exps/{protein}',
-                '--cvae', '../CVAE_exps', '--pdb', pdb_path,
-                '--ref', ref_path]
+                (cfg['base_path'], cfg['base_path'])]
+        t4.pre_exec += ['cd %s/Outlier_search' % cfg['base_path']]
+        t4.executable = ['%s/bin/python' % cfg['conda_path']]
+        t4.arguments = ['outlier_locator.py', '--md', f'../MD_exps/{cfg['protein']}',
+                '--cvae', '../CVAE_exps', '--pdb', cfg['pdb_path'],
+                '--ref', cfg['ref_path']]
 
         t4.cpu_reqs = {'processes': 1,
                            'process_type': None,
@@ -279,23 +282,23 @@ def generate_training_pipeline():
 
 
     def func_condition():
-        global CUR_STAGE, MAX_STAGE
-        if CUR_STAGE < MAX_STAGE:
+        global cfg['cur_stage'], cfg['max_stage']
+        if cfg['cur_stage'] < cfg['max_stage']:
             func_on_true()
         else:
             func_on_false()
 
     def func_on_true():
-        global CUR_STAGE, MAX_STAGE
-        print ('finishing stage %d of %d' % (CUR_STAGE, MAX_STAGE))
+        global cfg['cur_stage'], cfg['max_stage']
+        print ('finishing stage %d of %d' % (cfg['cur_stage'], cfg['max_stage']))
 
         # --------------------------
         # MD stage
-        s1 = generate_MD_stage(num_MD=md_counts)
+        s1 = generate_MD_stage(num_MD=cfg['md_counts'])
         # Add simulating stage to the training pipeline
         p.add_stages(s1)
 
-        if CUR_STAGE % RETRAIN_FREQ == 0:
+        if cfg['cur_stage'] % cfg['retrain_freq'] == 0:
             # --------------------------
             # Aggregate stage
             s2 = generate_aggregating_stage()
@@ -304,7 +307,7 @@ def generate_training_pipeline():
 
             # --------------------------
             # Learning stage
-            s3 = generate_ML_stage(num_ML=ml_counts)
+            s3 = generate_ML_stage(num_ML=cfg['ml_counts'])
             # Add the learning stage to the pipeline
             p.add_stages(s3)
 
@@ -313,19 +316,19 @@ def generate_training_pipeline():
         #s4 = generate_interfacing_stage()
         #p.add_stages(s4)
 
-        CUR_STAGE += 1
+        cfg['cur_stage'] += 1
 
     def func_on_false():
         print ('Done')
 
 
-    global CUR_STAGE
+    global cfg['cur_stage']
     p = Pipeline()
     p.name = 'MD_ML'
 
     # --------------------------
     # MD stage
-    s1 = generate_MD_stage(num_MD=md_counts)
+    s1 = generate_MD_stage(num_MD=cfg['md_counts'])
     # Add simulating stage to the training pipeline
     p.add_stages(s1)
 
@@ -337,7 +340,7 @@ def generate_training_pipeline():
 
     # --------------------------
     # Learning stage
-    s3 = generate_ML_stage(num_ML=ml_counts)
+    s3 = generate_ML_stage(num_ML=cfg['ml_counts'])
     # Add the learning stage to the pipeline
     p.add_stages(s3)
 
@@ -346,7 +349,7 @@ def generate_training_pipeline():
     # s4 = generate_interfacing_stage()
     # p.add_stages(s4)
 
-    CUR_STAGE += 1
+    cfg['cur_stage'] += 1
 
     return p
 
@@ -354,25 +357,36 @@ def generate_training_pipeline():
 # ------------------------------------------------------------------------------
 # Set default verbosity
 
-#if os.environ.get('RADICAL_ENTK_VERBOSE') is None:
-#    os.environ['RADICAL_ENTK_REPORT'] = 'True'
+# reporter = ru.Reporter(name='radical.entk')
+# reporter.title('GB20 COVID-19 - Workflow S2')
 
+# resource specified as argument
+# if len(sys.argv) == 2:
+#     cfg_file = sys.argv[1]
+# else:
+#     reporter.exit('Usage:\t%s [config.json]\n\n' % sys.argv[0])
+
+# export RADICAL_PILOT_PROFILE=True
+# export RADICAL_ENTK_PROFILE=True
 
 #if __name__ == '__main__':
+
+    # cfg = ru.Config(cfg=ru.read_json(cfg_file))
 
 #    # Create a dictionary to describe four mandatory keys:
 #    # resource, walltime, cores and project
 #    # resource is 'local.localhost' to execute locally
-#    gpu_per_node = 6
-#    node_counts = max(md_counts // gpu_per_node, ml_counts // gpu_per_node)
+
+#    node_counts = max(cfg['md_counts'] // cfg['gpu_per_node'],
+#                      cfg['ml_counts'] // cfg['gpu_per_node'])
 #    res_dict = {
 #            'resource': 'ornl.summit',
 #            'queue'   : 'batch',
 #            'schema'  : 'local',
-#            'walltime': 60 * wall_hour,
+#            'walltime': 60 * cfg['wall_hour'],
 #            'cpus'    : 42 * 4 * node_counts,
 #            'gpus'    : 6 * node_counts,
-#            'project' : project_name
+#            'project' : cfg['project_name']
 #    }
 
     # Create Application Manager
@@ -382,7 +396,7 @@ def generate_training_pipeline():
 #            password=os.environ.get('RMQ_PASSWORD'))
 #    appman.resource_desc = res_dict
 
-#    p1 = generate_training_pipeline()
+#    p1 = generate_training_pipeline(cfg)
 #    pipelines = [p1]
 
 #    # Assign the workflow as a list of Pipelines to the Application Manager. In

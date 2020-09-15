@@ -7,7 +7,7 @@ import radical.utils as ru
 import radical.pilot as rp
 import radical.entk as entk
 
-import wf2
+import wf2keras as wf2
 import wf3
 
 
@@ -36,11 +36,11 @@ def wf2_run(appman):
 
 # ------------------------------------------------------------------------------
 def get_wf3_input(appman, cfg):
-    p = Pipeline()
+    p = entk.Pipeline()
     p.name = 'get_wf3_input'
-    s = Stage()
+    s = entk.Stage()
 
-    t = Task()
+    t = entk.Task()
     t.executable = ['python3']
     t.arguments = ['-f', cfg['outlier_path'], '-p', cfg['top_path']]
 
