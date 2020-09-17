@@ -10,5 +10,5 @@
         "project"  : "MED110"
     },
     #"workflows": ["wf2", "wf3"],
-    "workflows": ["wf3"]
+    "workflows": ["wf2"]
 }

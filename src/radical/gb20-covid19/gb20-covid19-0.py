@@ -7,7 +7,7 @@ import radical.utils as ru
 import radical.pilot as rp
 import radical.entk as entk
 
-import wf2keras as wf2
+import wf2 as wf2
 import wf3
 
 
