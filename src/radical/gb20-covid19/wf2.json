@@ -1,35 +1,29 @@
 {
-    # S1 - Simulation
-    "protein"  : "fs-pep",
-    "md_counts": 12,
-    "ml_counts": 10,
-    "pdb_path" : "/gpfs/alpine/med110/scratch/mturilli1/DrugWorkflows/workflow-2/MD_exps/fs-pep/pdb/100-fs-peptide-400K.pdb",
-    "ref_path" : "/gpfs/alpine/med110/scratch/mturilli1/DrugWorkflows/workflow-2/MD_exps/fs-pep/pdb/fs-peptide.pdb",
+    "md_counts"     : 12,
+    "ml_counts"     : 10,
+    "gpu_per_node"  : 6,
+    "batch_size"    : 64,
+    "epoch"         : 5,
+    "pdb_file"      : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters/input_adrp/prot.pdb",
+    "top_file"      : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters/input_adrp/prot.prmtop",
+    # "pdb_path"    : "/gpfs/alpine/med110/scratch/mturilli1/DrugWorkflows/workflow-2/MD_exps/fs-pep/pdb/100-fs-peptide-400K.pdb",
+    # "ref_path"    : "/gpfs/alpine/med110/scratch/mturilli1/DrugWorkflows/workflow-2/MD_exps/fs-pep/pdb/fs-peptide.pdb",
 
-    # S3 - ML
-    "batch_size": 64,
-    "epoch"     : 100,
+    "conda_path"    : "/gpfs/alpine/proj-shared/med110/conda/openmm",
+    "conda_openmm"  : "/gpfs/alpine/proj-shared/med110/conda/openmm",
+    "conda_pytorch" : "/gpfs/alpine/proj-shared/med110/atrifan/scripts/pytorch-1.6.0_cudnn-8.0.2.39_nccl-2.7.8-1_static_mlperf",
+    "base_path"     : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2",
+    "molecules_path": "/gpfs/alpine/proj-shared/med110/hrlee/git/braceal/molecules",
 
-    # S4 - Outlier detection
-    "outlier_path": "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Outlier_search/outlier_pdbs/",
-    "top_path"    : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Outlier_search/outlier_pdbs/Parameters/",
+    "CUR_STAGE"     : 0,
+    "MAX_STAGE"     : 10,
+    "RETRAIN_FREQ"  : 5,
+    "LEN_initial"   : 10,
+    "LEN_iter"      : 5,
 
-    # Conda envs
-    "task_conda_path": "",
-    "task_conda_sh"  : "/sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh",
-    "conda_openmm"   : "/gpfs/alpine/proj-shared/med110/conda/openmm",
-    "conda_pytorch"  : "/gpfs/alpine/proj-shared/med110/atrifan/scripts/pytorch-1.6.0_cudnn-8.0.2.39_nccl-2.7.8-1_static_mlperf",
-    "base_path"      : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2",
-    "molecules_path" : "/gpfs/alpine/proj-shared/med110/hrlee/git/braceal/molecules",
-
-
-    # Iteration
-    "CUR_STAGE"   : 0,
-    "MAX_STAGE"   : 10,
-    "RETRAIN_FREQ": 5,
-    "LEN_initial" : 10,
-    "LEN_iter"    : 10,
-
-    # Resource
-    "gpu_per_node": 6
+    "resource"      : "ornl.summit",
+    "queue"         : "debug",
+    "schema"        : "local",
+    "walltime"      : 360,
+    "project"       : "MED110"
 }
