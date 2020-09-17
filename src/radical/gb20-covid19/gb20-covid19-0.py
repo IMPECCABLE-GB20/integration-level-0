@@ -30,6 +30,7 @@ def get_pilot_description(pdesc):
 
 # ------------------------------------------------------------------------------
 def wf2_run(appman, cfg):
+    cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
     p1 = wf2.generate_training_pipeline(cfg)
     appman.workflow = [p1]
     appman.run()
