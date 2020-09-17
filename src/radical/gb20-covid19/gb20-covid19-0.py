@@ -29,8 +29,8 @@ def get_pilot_description(pdesc):
     return ret
 
 # ------------------------------------------------------------------------------
-def wf2_run(appman):
-    p1 = wf2.generate_training_pipeline()
+def wf2_run(appman, cfg):
+    p1 = wf2.generate_training_pipeline(cfg)
     appman.workflow = [p1]
     appman.run()
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
         for wf in cfg['workflows']:
             if wf == 'wf2':
-                wf2_run(appman)
+                wf2_run(appman, cfg_wf2)
             elif wf == 'wf3':
                 get_wf3_input(appman, cfg_wf3)
                 wf3_run(appman, cfg_wf3)
