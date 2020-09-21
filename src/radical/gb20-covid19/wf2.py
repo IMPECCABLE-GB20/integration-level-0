@@ -71,12 +71,13 @@ def generate_training_pipeline(cfg):
                 t1.arguments += ['--pdb_file', cfg['pdb_file'] ]
                 t1.arguments += ['--topol', cfg['top_file']]
             elif outlier_list[i].endswith('pdb'):
+                t1.pre_exec += ['cp %s ./' % outlier_list[i]]
                 t1.arguments += ['--pdb_file', outlier_list[i]]
-                t1.pre_exec += ['cp %s ./' % outlier_list[i]]
+                t1.arguments += ['--topol', cfg['top_file']]
             elif outlier_list[i].endswith('chk'):
-                t1.arguments += ['--pdb_file', cfg['pdb_file'],
-                        '-c', outlier_list[i]]
                 t1.pre_exec += ['cp %s ./' % outlier_list[i]]
+                t1.arguments += ['--pdb_file', cfg['pdb_file'], '-c', outlier_list[i]]
+                t1.arguments += ['--topol', cfg['top_file']]
 
             # how long to run the simulation
             if initial_MD:
