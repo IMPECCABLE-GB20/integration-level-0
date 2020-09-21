@@ -112,7 +112,8 @@ def generate_training_pipeline(cfg):
         # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/MD_to_CVAE/MD_to_CVAE.py
         t2.pre_exec  = []
         t2.pre_exec += ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
-        t2.pre_exec += ['conda activate %s' % cfg['conda_openmm']]
+        # t2.pre_exec += ['conda activate %s' % cfg['conda_openmm']]
+        t2.pre_exec += ['conda activate %s' % cfg['conda_pytorch']]
         # preprocessing for molecules' script, it needs files in a single
         # directory
         # the following pre-processing does:
@@ -123,8 +124,13 @@ def generate_training_pipeline(cfg):
                 'export dcd_list=(`ls %s/MD_exps/%s/omm_runs_*/*dcd`)' % (cfg['base_path'], cfg['system_name']),
                 'export tmp_path=`mktemp -p %s/MD_to_CVAE/ -d`' % cfg['base_path'],
                 'for dcd in ${dcd_list[@]}; do tmp=$(basename $(dirname $dcd)); ln -s $dcd $tmp_path/$tmp.dcd; done']
+        # prevent the click module to fail with "Python 3 was configured to 
+        # use ASCII as encoding for the environment"
+        t2.pre_exec += ['export LC_ALL=en_US.utf-8']
+        t2.pre_exec += ['export LANG=en_US.utf-8']
 
-        t2.executable = ['%s/bin/python' % cfg['conda_openmm']]  # MD_to_CVAE.py
+        # t2.executable = ['%s/bin/python' % cfg['conda_openmm']]  # MD_to_CVAE.py
+        t2.executable = ['%s/bin/python' % cfg['conda_pytorch']]
         t2.arguments = [
                 '%s/scripts/traj_to_dset.py' % cfg['molecules_path'],
                 '-t', '$tmp_path',
@@ -166,14 +172,14 @@ def generate_training_pipeline(cfg):
                             'export LANG=en_US.utf-8',
                             'export LC_ALL=en_US.utf-8']
             t3.pre_exec += ['conda activate %s' % cfg['conda_pytorch']]
-            t3.pre_exec += ['PYTHONPATH=/ccs/home/hrlee/.local/lib/python3.6/site-packages:$PYTHONPATH']
+            # t3.pre_exec += ['PYTHONPATH=/ccs/home/hrlee/.local/lib/python3.6/site-packages:$PYTHONPATH']
             dim = i + 3
             cvae_dir = 'cvae_runs_%.2d_%d' % (dim, time_stamp+i)
             t3.pre_exec += ['cd %s/CVAE_exps' % cfg['base_path']]
-            #t3.pre_exec += ['mkdir -p %s && cd %s' % (cvae_dir, cvae_dir)] # model_id creates sub-dir
+            # t3.pre_exec += ['mkdir -p %s && cd %s' % (cvae_dir, cvae_dir)] # model_id creates sub-dir
             # this is for ddp, distributed
-            #t3.pre_exec += ['unset CUDA_VISIBLE_DEVICES', 'export OMP_NUM_THREADS=4']
-            #nnodes = cfg['node_counts'] // num_ML
+            # t3.pre_exec += ['unset CUDA_VISIBLE_DEVICES', 'export OMP_NUM_THREADS=4']
+            # nnodes = cfg['node_counts'] // num_ML
 
             hp = cfg['ml_hpo'][i]
             #cmd_cat    = 'cat /dev/null'
