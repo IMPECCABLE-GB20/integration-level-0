@@ -66,18 +66,18 @@ def generate_training_pipeline(cfg):
             t1.arguments = ['%s/MD_exps/%s/run_openmm.py' % (cfg['base_path'], cfg['system_name'])]
             #t1.arguments += ['--topol', '%s/MD_exps/fs-pep/pdb/topol.top' % cfg['base_path']]
 
+            if 'top_file' in cfg:
+                t1.arguments += ['--topol', cfg['top_file']]
             # pick initial point of simulation
             if initial_MD or i >= len(outlier_list):
                 t1.arguments += ['--pdb_file', cfg['pdb_file'] ]
-                t1.arguments += ['--topol', cfg['top_file']]
             elif outlier_list[i].endswith('pdb'):
-                t1.pre_exec += ['cp %s ./' % outlier_list[i]]
                 t1.arguments += ['--pdb_file', outlier_list[i]]
-                t1.arguments += ['--topol', cfg['top_file']]
-            elif outlier_list[i].endswith('chk'):
                 t1.pre_exec += ['cp %s ./' % outlier_list[i]]
-                t1.arguments += ['--pdb_file', cfg['pdb_file'], '-c', outlier_list[i]]
-                t1.arguments += ['--topol', cfg['top_file']]
+            elif outlier_list[i].endswith('chk'):
+                t1.arguments += ['--pdb_file', cfg['pdb_file'],
+                        '-c', outlier_list[i]]
+                t1.pre_exec += ['cp %s ./' % outlier_list[i]]
 
             # how long to run the simulation
             if initial_MD:
@@ -129,18 +129,28 @@ def generate_training_pipeline(cfg):
                 'ln -s %s $tmp_path/prot.pdb' % cfg['pdb_file'],
                 'ls ${tmp_path}']
 
-        t2.executable = ['%s/bin/python' % cfg['conda_pytorch']]  # MD_to_CVAE.py
+        t2.pre_exec += ['unset CUDA_VISIBLE_DEVICES', 'export OMP_NUM_THREADS=4']
+
+        node_cnt_constraint = cfg['md_counts'] * max(1, CUR_STAGE) // 12
+        cmd_cat    = 'cat /dev/null'
+        cmd_jsrun  = 'jsrun -n %s -r 1 -a 6 -c 7 -d packed' % min(cfg['node_counts'], node_cnt_constraint)
+
+        t2.executable = ['%s; %s %s/bin/python' % (cmd_cat, cmd_jsrun, cfg['conda_pytorch'])]  # MD_to_CVAE.py
         t2.arguments = [
                 '%s/scripts/traj_to_dset.py' % cfg['molecules_path'],
                 '-t', '$tmp_path',
                 '-p', '%s/Parameters/input_protein/prot.pdb' % cfg['base_path'],
                 '-r', '%s/Parameters/input_protein/prot.pdb' % cfg['base_path'],
                 '-o', '%s/MD_to_CVAE/cvae_input.h5' % cfg['base_path'],
+                '--contact_maps_parameters',
+                "kernel_type=threshold,threshold=%s" % cfg['cutoff'],
+                '-s', cfg['selection'],
                 '--rmsd',
                 '--fnc',
                 '--contact_map',
                 '--point_cloud',
-                '--num_workers', 42,
+                '--num_workers', 2,
+                '--distributed',
                 '--verbose']
 
         # Add the aggregation task to the aggreagating stage
@@ -172,7 +182,6 @@ def generate_training_pipeline(cfg):
                             'export LANG=en_US.utf-8',
                             'export LC_ALL=en_US.utf-8']
             t3.pre_exec += ['conda activate %s' % cfg['conda_pytorch']]
-            # t3.pre_exec += ['PYTHONPATH=/ccs/home/hrlee/.local/lib/python3.6/site-packages:$PYTHONPATH']
             dim = i + 3
             cvae_dir = 'cvae_runs_%.2d_%d' % (dim, time_stamp+i)
             t3.pre_exec += ['cd %s/CVAE_exps' % cfg['base_path']]
@@ -289,13 +298,12 @@ def generate_training_pipeline(cfg):
         # Add simulating stage to the training pipeline
         p.add_stages(s1)
 
-        if CUR_STAGE % cfg['RETRAIN_FREQ'] == 0:
-            # --------------------------
-            # Aggregate stage
-            s2 = generate_aggregating_stage()
-            # Add the aggregating stage to the training pipeline
-            p.add_stages(s2)
+        # --------------------------
+        # Aggregate stage
+        s2 = generate_aggregating_stage()
+        p.add_stages(s2)
 
+        if CUR_STAGE % cfg['RETRAIN_FREQ'] == 0:
             # --------------------------
             # Learning stage
             s3 = generate_ML_stage(num_ML=cfg['ml_counts'])

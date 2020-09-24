@@ -43,7 +43,9 @@ def get_wf3_input(appman, cfg):
 
     t = entk.Task()
     t.executable = ['python3']
-    t.arguments = ['-f', cfg['outlier_path'], '-p', cfg['top_path']]
+    t.arguments = ['gather.py',
+                   '-f', cfg['outlier_path'],
+                   '-p', cfg['top_path']]
 
     s.add_tasks(t)
     p.add_stages(s)
