@@ -1,10 +1,10 @@
 {
     "pdesc": {
         "resource" : "ornl.summit",
-        "queue"    : "debug",
+        "queue"    : "batch",
         "schema"   : "local",
         "nodes"    : 20,
-        "walltime" : 120,
+        "walltime" : 360,
         "cpus_node": 42,
         "gpus_node": 6,
         "project"  : "MED110"
