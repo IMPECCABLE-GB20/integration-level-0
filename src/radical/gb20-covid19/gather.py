@@ -5,11 +5,12 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--path", help="outlier path for PDBs")
-parser.add_argument("-p", "--top", help="Workflow 2 inputs for topology files")
+parser.add_argument("-p", "--top" , help="Workflow 2 inputs for topology files")
+
 args = parser.parse_args()
 
 outlier_path = os.path.abspath(args.path)
-top_path = os.path.abspath(args.top)
+top_path     = os.path.abspath(args.top)
 outlier_pdbs = sorted(glob.glob(outlier_path + '/omm_*.pdb'))
 
 for pdb in outlier_pdbs:
