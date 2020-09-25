@@ -2,7 +2,7 @@ import glob
 from radical.entk import Pipeline, Stage, Task
 
 
-def esmacs(cfg, names, stage, outdir="equilibration"):
+def esmacs(cfg, names, stage, outdir):
 
     s = Stage()
     #print("DEBUG:instantiation:  %s" % len(s._tasks))
@@ -56,11 +56,11 @@ def generate_esmacs(cfg):
     p = Pipeline()
     p.name = 'ESMACS'
 
-    s1 = esmacs(cfg, esmacs_names, stage="eq1")
+    s1 = esmacs(cfg, esmacs_names, stage="eq1", outdir="equilibration")
     p.add_stages(s1)
 
-    s2 = esmacs(cfg, esmacs_names, stage="eq2")
-    p.add_stages(s2)
+    # s2 = esmacs(cfg, esmacs_names, stage="eq2")
+    # p.add_stages(s2)
 
     s3 = esmacs(cfg, esmacs_names, stage="sim1", outdir="simulation")
     p.add_stages(s3)
