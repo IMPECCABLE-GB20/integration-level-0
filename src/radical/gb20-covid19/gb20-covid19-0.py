@@ -37,7 +37,7 @@ def wf1_run(appman, cfg):
     pass
 
 # ------------------------------------------------------------------------------
-def wf2_run(appman, cfg):
+def wf2_run(appman, cfg, counter=1):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
     p1 = wf2.generate_training_pipeline(cfg)
     appman.workflow = [p1]
@@ -67,7 +67,7 @@ def wf3_run(appman, cfg, counter=1):
 
     # Creates the requested number of concurrent pipelines
     for i in range(0,counter):
-        pipeline.append(wf3.generate_esmacs(cfg))
+        pipelines.append(wf3.generate_esmacs(cfg))
 
     appman.workflow = pipelines
     appman.run()
