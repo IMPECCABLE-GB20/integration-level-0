@@ -67,7 +67,7 @@ def wf3_run(appman, cfg, counter=1):
 
     # Creates the requested number of concurrent pipelines
     for i in range(0,counter):
-        pipeline.append(wf3.generate_esmacs(cfg))
+        pipelines.append(wf3.generate_esmacs(cfg))
 
     appman.workflow = pipelines
     appman.run()
