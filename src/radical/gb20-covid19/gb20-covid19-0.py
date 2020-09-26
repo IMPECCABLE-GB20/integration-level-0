@@ -37,7 +37,7 @@ def wf1_run(appman, cfg):
     pass
 
 # ------------------------------------------------------------------------------
-def wf2_run(appman, cfg):
+def wf2_run(appman, cfg, counter=1):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
     p1 = wf2.generate_training_pipeline(cfg)
     appman.workflow = [p1]
