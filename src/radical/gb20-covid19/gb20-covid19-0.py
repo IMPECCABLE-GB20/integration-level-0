@@ -29,6 +29,14 @@ def get_pilot_description(pdesc):
     return ret
 
 # ------------------------------------------------------------------------------
+def ml1_run(appman, cfg):
+    pass
+
+# ------------------------------------------------------------------------------
+def wf1_run(appman, cfg):
+    pass
+
+# ------------------------------------------------------------------------------
 def wf2_run(appman, cfg):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
     p1 = wf2.generate_training_pipeline(cfg)
@@ -37,15 +45,15 @@ def wf2_run(appman, cfg):
 
 # ------------------------------------------------------------------------------
 def get_wf3_input(appman, cfg):
+    # Assuming shared filesystem on login node this can be executed by the
+    # script instead of EnTK.
     p = entk.Pipeline()
     p.name = 'get_wf3_input'
     s = entk.Stage()
 
     t = entk.Task()
     t.executable = ['python3']
-    t.arguments = ['gather.py',
-                   '-f', cfg['outlier_path'],
-                   '-p', cfg['top_path']]
+    t.arguments = ['gather.py', '-f', cfg['outlier_path'], '-p', cfg['top_path']]
 
     s.add_tasks(t)
     p.add_stages(s)
@@ -94,7 +102,11 @@ if __name__ == '__main__':
         appman.resource_desc = pdesc
 
         for wf in cfg['workflows']:
-            if wf == 'wf2':
+            if wf == 'ml1':
+                ml1_run(appman, cfg_ml1)
+            elif wf == 'wf1':
+                wf1_run(appman, cfg_wf1)
+            elif wf == 'wf2':
                 wf2_run(appman, cfg_wf2)
             elif wf == 'wf3':
                 # get_wf3_input(appman, cfg_wf3)
@@ -106,5 +118,6 @@ if __name__ == '__main__':
 
 
     except Exception as e:
+        appman.terminate()
         print('Error: ', e)
         raise
