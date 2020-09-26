@@ -8,7 +8,7 @@ import radical.pilot as rp
 import radical.entk as entk
 
 import wf2 as wf2
-import wf3
+import wf3 as wf3
 
 
 # ------------------------------------------------------------------------------
@@ -62,9 +62,13 @@ def get_wf3_input(appman, cfg):
     appman.run()
 
 # ------------------------------------------------------------------------------
-def wf3_run(appman, cfg):
-    p1 = wf3.generate_esmacs(cfg)
-    pipelines = [p1]
+def wf3_run(appman, cfg, counter=1):
+    pipelines = []
+
+    # Creates the requested number of concurrent pipelines
+    for i in range(0,counter):
+        pipeline.append(wf3.generate_esmacs(cfg))
+
     appman.workflow = pipelines
     appman.run()
 
@@ -110,7 +114,8 @@ if __name__ == '__main__':
                 wf2_run(appman, cfg_wf2)
             elif wf == 'wf3':
                 # get_wf3_input(appman, cfg_wf3)
-                wf3_run(appman, cfg_wf3)
+                counter = 5
+                wf3_run(appman, cfg_wf3, counter)
             else:
                 raise Exception("ERROR: unrecognized workflow %s" % wf)
 
