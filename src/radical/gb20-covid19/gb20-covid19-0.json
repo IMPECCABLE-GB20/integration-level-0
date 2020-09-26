@@ -4,7 +4,7 @@
         #"queue"    : "batch",
         "queue"    : "debug",
         "schema"   : "local",
-        "nodes"    : 2,
+        "nodes"    : 20,
         "walltime" : 60,
         "cpus_node": 42,
         "gpus_node": 6,
