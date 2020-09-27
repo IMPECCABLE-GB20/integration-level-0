@@ -9,7 +9,7 @@ def esmacs(cfg, names, stage, outdir):
 
     for comp in names:
         #print("DEBUG:first loop: %s" % len(s._tasks))
-        for i in range(1, 13):
+        for i in range(0, 4):
             #print("DEBUG:second loop:start: %s" % len(s._tasks))
             t = Task()
 
