@@ -35,10 +35,35 @@ def ml1_run(appman, cfg, reporter):
 
 # ------------------------------------------------------------------------------
 def wf1_run(appman, cfg, reporter):
+    p = entk.Pipeline()
+    p.name = 'S1'
+    s = entk.Stage()
+
+    t = entk.Task()
+    t.executable = ['python3']
+    t.arguments = ['wf0.py', cfg['wf0.summit.cfg'], cfg['receptors.dat']]
+
+    s.add_tasks(t)
+    p.add_stages(s)
+    appman.workflow = [p]
+
     reporter.header('Executing S1')
-    pass
+    appman.run()
 
 # ------------------------------------------------------------------------------
+def wf3_run_cg(appman, cfg, reporter, counter=1):
+    pipelines = []
+
+    # Creates the requested number of concurrent pipelines
+    for i in range(0,counter):
+        pipelines.append(wf3.generate_esmacs(cfg))
+
+    appman.workflow = pipelines
+
+    reporter.header('Executing S3')
+    appman.run()
+
+    # ------------------------------------------------------------------------------
 def wf2_run(appman, cfg, reporter, counter=1):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
     p1 = wf2.generate_training_pipeline(cfg)
@@ -66,7 +91,7 @@ def get_wf3_input(appman, cfg):
     appman.run()
 
 # ------------------------------------------------------------------------------
-def wf3_run(appman, cfg, reporter, counter=1):
+def wf3_run_fg(appman, cfg, reporter, counter=1):
     pipelines = []
 
     # Creates the requested number of concurrent pipelines
@@ -116,20 +141,31 @@ if __name__ == '__main__':
                 reporter.header('Submit ML1')
                 ml1_run(appman, cfg_ml1, reporter)
                 reporter.header('ML1 done')
+
             elif wf == 'wf1':
                 reporter.header('Submit S1')
                 wf1_run(appman, cfg_wf1, reporter)
                 reporter.header('S1 done')
+
+            elif wf == 'wf3cg':
+                reporter.header('Submit S3')
+                # get_wf3_input(appman, cfg_wf3)
+                counter = 10
+                wf3_run_cg(appman, cfg_wf3, reporter, counter)
+                reporter.header('S3 done')
+
             elif wf == 'wf2':
                 reporter.header('Submit S2')
                 wf2_run(appman, cfg_wf2, reporter)
                 reporter.header('S2 done')
-            elif wf == 'wf3':
+
+            elif wf == 'wf3fg':
                 reporter.header('Submit S3')
                 # get_wf3_input(appman, cfg_wf3)
                 counter = 10
-                wf3_run(appman, cfg_wf3, reporter, counter)
+                wf3_run_fg(appman, cfg_wf3, reporter, counter)
                 reporter.header('S3 done')
+
             else:
                 raise Exception("ERROR: unrecognized workflow %s" % wf)
 
