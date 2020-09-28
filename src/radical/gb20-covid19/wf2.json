@@ -1,86 +1,57 @@
 {
-    "resource"      : "ornl.summit",
-    "queue"         : "debug",
-    "schema"        : "local",
-    "walltime"      : 120,
-    "project"       : "MED110",
+    "resource"       : "ornl.summit",
+    "queue"          : "debug",
+    "schema"         : "local",
+    "walltime"       : 120,
+    "project"        : "MED110",
+    "gpu_per_node"   : 6,
 
-    "md_counts"     : 120,
-    "ml_counts"     : 10,
-    "gpu_per_node"  : 6,
-    "batch_size"    : 256,
-    "epoch"         : 5,
-    "cutoff"        : 20,
-    "selection"     : "resid 1:304 and protein and name CA",
+    "md_counts"      : 120,
+    "ml_counts"      : 3,
+    "batch_size"     : 512,
+    "cutoff"         : 16,
+    "selection"      : "resid 2:305 and protein and name CA",
+    "epoch"          : 5,
+    "sample_interval": 3,
+    "model_type"     : "aae",
 
-    "CUR_STAGE"     : 0,
-    "MAX_STAGE"     : 2,
-    "RETRAIN_FREQ"  : 5,
-    "LEN_initial"   : 1,
-    "LEN_iter"      : 10,
+    "CUR_STAGE"      : 0,
+    "MAX_STAGE"      : 2,
+    "RETRAIN_FREQ"   : 1,
+    "LEN_initial"    : 1,
+    "LEN_iter"       : 10,
 
-    "conda_path"    : "/gpfs/alpine/proj-shared/med110/conda/openmm",
-    "conda_openmm"  : "/gpfs/alpine/proj-shared/med110/conda/openmm",
-    "conda_pytorch" : "/gpfs/alpine/proj-shared/med110/atrifan/scripts/pytorch-1.6.0_cudnn-8.0.2.39_nccl-2.7.8-1_static_mlperf",
+    "conda_path"     : "/gpfs/alpine/proj-shared/med110/conda/openmm",
+    "conda_openmm"   : "/gpfs/alpine/proj-shared/med110/conda/openmm",
+    "conda_pytorch"  : "/gpfs/alpine/proj-shared/med110/atrifan/scripts/pytorch-1.6.0_cudnn-8.0.2.39_nccl-2.7.8-1_static_mlperf",
 
-    "base_path"     : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2",
-    "molecules_path": "/gpfs/alpine/proj-shared/med110/hrlee/git/braceal/molecules",
+    "base_path"      : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2",
+    "molecules_path" : "/gpfs/alpine/proj-shared/med110/hrlee/git/braceal/molecules",
 
-    "system_name"   : "3clpro",
-    "residues"      : 303,
-    "pdb_file"      : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters/input_protein/prot.pdb",
-    "top_file"      : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters/input_protein/prot.prmtop",
+    "system_name"    : "3clpro",
+    "residues"       : 303,
+    "init_weights"   : "/gpfs/alpine/proj-shared/med110/hrlee/epoch-60-20200926-003445.pt",
+    "pdb_file"       : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters/input_protein/prot.pdb",
+    "top_file"       : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters/input_protein/prot.prmtop",
 
-    "ml_hpo" : [
+    "ml_hpo"         : [
         {
-            "optimizer" : "name=RMSprop,lr=1e-5",
-            "latent_dim": 21,
-	        "batch_size": 256
+            "optimizer"    : "name=Adam,lr=1e-5",
+            "loss_weights" : "lambda_rec=0.5,lambda_gp=10",
+            "latent_dim"   : 48,
+            "batch_size"   : 32
         },
         {
-            "optimizer" : "name=RMSprop,lr=1e-4",
-            "latent_dim": 21,
-	        "batch_size": 256
+            "optimizer"    : "name=Adam,lr=1e-6",
+            "loss_weights" : "lambda_rec=0.5,lambda_gp=10",
+            "latent_dim"   : 48,
+            "batch_size"   : 32
         },
         {
-            "optimizer" : "name=RMSprop,lr=1e-3",
-            "latent_dim": 21,
-	        "batch_size": 256
-        },
-        {
-            "optimizer" : "name=RMSprop,lr=1e-2",
-            "latent_dim": 21,
-	        "batch_size": 256
-        },
-        {
-            "optimizer" : "name=RMSprop,lr=1e-1",
-            "latent_dim": 21,
-	        "batch_size": 256
-        },
-        {
-            "optimizer" : "name=Adam,lr=1e-5",
-            "latent_dim": 21,
-	        "batch_size": 256
-        },
-        {
-            "optimizer" : "name=Adam,lr=1e-4",
-            "latent_dim": 21,
-	        "batch_size": 256
-        },
-        {
-            "optimizer" : "name=Adam,lr=1e-3",
-            "latent_dim": 21,
-	        "batch_size": 256
-        },
-        {
-            "optimizer" : "name=Adam,lr=1e-2",
-            "latent_dim": 21,
-	        "batch_size": 256
-        },
-        {
-            "optimizer" : "name=Adam,lr=1e-1",
-            "latent_dim": 21,
-	        "batch_size": 256
+            "optimizer"    : "name=Adam,lr=1e-7",
+            "loss_weights" : "lambda_rec=0.5,lambda_gp=10",
+            "latent_dim"   : 48,
+            "batch_size"   : 32
         }
     ]
 }
