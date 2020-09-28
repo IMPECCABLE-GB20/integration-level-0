@@ -114,7 +114,7 @@ if __name__ == '__main__':
                 wf2_run(appman, cfg_wf2)
             elif wf == 'wf3':
                 # get_wf3_input(appman, cfg_wf3)
-                counter = 5
+                counter = 10
                 wf3_run(appman, cfg_wf3, counter)
             else:
                 raise Exception("ERROR: unrecognized workflow %s" % wf)
