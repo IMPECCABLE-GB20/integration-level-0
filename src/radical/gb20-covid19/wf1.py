@@ -228,8 +228,7 @@ def generate_pipeline(cfg):
                                       'wf0_worker.py',
                                       'configs/wf0.%s.cfg > wf0.cfg' % name,
                                       'read_ligand_dict.py']
-            t.link_input_data      = ['%s > input_dir' % workload.input_dir,
-                                      '%s > impress_md' % workload.impress_dir]
+            t.link_input_data      = ['%s > input_dir' % workload.input_dir]
             t.download_output_data = ['%s.%s.gz > results/%s.%s.gz' %
                 (name, workload.output, name, workload.output)]
             # t.input_staging  = [{'source': 'wf0_master.py',
