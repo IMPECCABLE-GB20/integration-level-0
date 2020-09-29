@@ -63,7 +63,7 @@ def wf3_run_cg(appman, cfg, reporter, counter=1):
     reporter.header('Executing S3')
     appman.run()
 
-    # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def wf2_run(appman, cfg, reporter, counter=1):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
     p1 = wf2.generate_training_pipeline(cfg)
