@@ -7,6 +7,7 @@ import radical.utils as ru
 import radical.pilot as rp
 import radical.entk as entk
 
+import wf1 as wf1
 import wf2 as wf2
 import wf3 as wf3
 
@@ -34,18 +35,9 @@ def ml1_run(appman, cfg, reporter):
     pass
 
 # ------------------------------------------------------------------------------
-def wf1_run(appman, cfg, reporter):
-    p = entk.Pipeline()
-    p.name = 'S1'
-    s = entk.Stage()
-
-    t = entk.Task()
-    t.executable = ['python3']
-    t.arguments = ['wf0.py', cfg['wf0.summit.cfg'], cfg['receptors.dat']]
-
-    s.add_tasks(t)
-    p.add_stages(s)
-    appman.workflow = [p]
+def wf1_run(appman, cfg, reporter, counter=1):
+    p1 = wf1.generate_pipeline(cfg)
+    appman.workflow = [p1]
 
     reporter.header('Executing S1')
     appman.run()
