@@ -135,9 +135,8 @@ def check_runs(cfg_file, run_file):
     return runs
 
 
-def run_via_entk(cfg):
+def generate_pipeline(cfg):
 
-    # TODO: add to wf0.json config file
     cfg_file  = cfg['run_cfg_file']  # resource and workload config
     run_file  = cfg['run_file']  # runs for this campaign
 
