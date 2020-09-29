@@ -18,41 +18,41 @@ p_map = dict()  # pilot: [task, task, ...]
 
 # ------------------------------------------------------------------------------
 #
-def unit_state_cb(unit, state):
+# def unit_state_cb(unit, state):
 
-    # terminate pilots once all masters running it are completed,
+#     # terminate pilots once all masters running it are completed,
 
-    global p_map
+#     global p_map
 
-    if state not in rp.FINAL:
-        return True
+#     if state not in rp.FINAL:
+#         return True
 
-    print('unit state: %s -> %s' % (unit.uid, state))
-    pilot = None
-    for p in p_map:
-        for u in p_map[p]:
-            if u.uid == unit.uid:
-                pilot = p
-                break
-        if pilot:
-            break
+#     print('unit state: %s -> %s' % (unit.uid, state))
+#     pilot = None
+#     for p in p_map:
+#         for u in p_map[p]:
+#             if u.uid == unit.uid:
+#                 pilot = p
+#                 break
+#         if pilot:
+#             break
 
-    # every master should be associated with one pilot
-    assert(pilot), [pilot.uid, unit.uid, pprint.pformat(pilot.as_dict())]
+#     # every master should be associated with one pilot
+#     assert(pilot), [pilot.uid, unit.uid, pprint.pformat(pilot.as_dict())]
 
-    to_cancel = True
-    for u in p_map[pilot]:
-        if u.state not in rp.FINAL:
-            to_cancel = False
-            break
+#     to_cancel = True
+#     for u in p_map[pilot]:
+#         if u.state not in rp.FINAL:
+#             to_cancel = False
+#             break
 
-    if to_cancel:
-        print('cancel pilot %s' % pilot.uid)
-        pilot.cancel()
-    else:
-        print('pilot remains active: %s' % pilot.uid)
+#     if to_cancel:
+#         print('cancel pilot %s' % pilot.uid)
+#         pilot.cancel()
+#     else:
+#         print('pilot remains active: %s' % pilot.uid)
 
-    return True
+#     return True
 
 
 # ------------------------------------------------------------------------------
@@ -91,46 +91,46 @@ def check_runs(cfg_file, run_file):
             nodes    = int(elems[2])
             runtime  = int(elems[3])
 
-            assert(receptor)
-            assert(smiles)
-            assert(nodes)
-            assert(runtime)
+        #     assert(receptor)
+        #     assert(smiles)
+        #     assert(nodes)
+        #     assert(runtime)
 
-          # print('%s/%s.pdbqt' % (rec_path, receptor))
-          # print('%s/%s.csv'   % (smi_path, smiles))
-            assert(os.path.isfile('%s/%s.pdbqt' % (rec_path, receptor)))
-            assert(os.path.isfile('%s/%s.csv'   % (smi_path, smiles)))
+        #   # print('%s/%s.pdbqt' % (rec_path, receptor))
+        #   # print('%s/%s.csv'   % (smi_path, smiles))
+        #     assert(os.path.isfile('%s/%s.pdbqt' % (rec_path, receptor)))
+        #     assert(os.path.isfile('%s/%s.csv'   % (smi_path, smiles)))
 
-            fname = '%s_-_%s.idx' % (receptor, smiles)
-            pname = '%s/%s'       % (smiles,   fname)
-            lname = '/tmp/%s'     % (fname)
+        #     fname = '%s_-_%s.idx' % (receptor, smiles)
+        #     pname = '%s/%s'       % (smiles,   fname)
+        #     lname = '/tmp/%s'     % (fname)
 
-            if not fs.is_file(pname):
-                n_have = 0
-            else:
-                ret = fs.list(pname)
-                fs.copy(pname, 'file://localhost/%s' % lname)
-                out, err, ret = ru.sh_callout('wc -l %s | cut -f 1 -d " "' % lname,
-                                              shell=True)
-                n_have = int(out)
+        #     if not fs.is_file(pname):
+        #         n_have = 0
+        #     else:
+        #         ret = fs.list(pname)
+        #         fs.copy(pname, 'file://localhost/%s' % lname)
+        #         out, err, ret = ru.sh_callout('wc -l %s | cut -f 1 -d " "' % lname,
+        #                                       shell=True)
+        #         n_have = int(out)
 
 
-            if smiles in n_smiles:
-                n_need = n_smiles[smiles]
+        #     if smiles in n_smiles:
+        #         n_need = n_smiles[smiles]
 
-            else:
-                sname = '%s/%s.csv' % (smi_path, smiles)
-                out, err, ret = ru.sh_callout('wc -l %s | cut -f 1 -d " "' % sname,
-                                              shell=True)
-                n_need = int(out) - 1
-                n_smiles[smiles] = n_need
+        #     else:
+        #         sname = '%s/%s.csv' % (smi_path, smiles)
+        #         out, err, ret = ru.sh_callout('wc -l %s | cut -f 1 -d " "' % sname,
+        #                                       shell=True)
+        #         n_need = int(out) - 1
+        #         n_smiles[smiles] = n_need
 
-            if n_need > n_have:
-                perc = int(100 * n_have / n_need)
-                print('run  %-30s %-25s [%3d%%]' % (receptor, smiles, perc))
-                runs.append([receptor, smiles, nodes, runtime])
-            else:
-                print('skip %-30s %-25s [100%%]' % (receptor, smiles))
+        #     if n_need > n_have:
+        #         perc = int(100 * n_have / n_need)
+        #         print('run  %-30s %-25s [%3d%%]' % (receptor, smiles, perc))
+        #         runs.append([receptor, smiles, nodes, runtime])
+        #     else:
+        #         print('skip %-30s %-25s [100%%]' % (receptor, smiles))
 
     return runs
 
