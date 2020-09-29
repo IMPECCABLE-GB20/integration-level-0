@@ -8,11 +8,11 @@
 
     "md_counts"      : 120,
     "ml_counts"      : 3,
-    "batch_size"     : 512,
     "cutoff"         : 16,
     "selection"      : "resid 2:305 and protein and name CA",
     "epoch"          : 5,
     "sample_interval": 3,
+    "batch_size"     : 512,
     "model_type"     : "aae",
 
     "CUR_STAGE"      : 0,
@@ -23,14 +23,15 @@
 
     "conda_path"     : "/gpfs/alpine/proj-shared/med110/conda/openmm",
     "conda_openmm"   : "/gpfs/alpine/proj-shared/med110/conda/openmm",
-    "conda_pytorch"  : "/gpfs/alpine/proj-shared/med110/atrifan/scripts/pytorch-1.6.0_cudnn-8.0.2.39_nccl-2.7.8-1_static_mlperf",
+    "conda_pytorch"  : "/gpfs/alpine/proj-shared/med110/conda/pytorch",
+   #"conda_pytorch"  : "/gpfs/alpine/proj-shared/med110/atrifan/scripts/pytorch-1.6.0_cudnn-8.0.2.39_nccl-2.7.8-1_static_mlperf",
 
     "base_path"      : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2",
     "molecules_path" : "/gpfs/alpine/proj-shared/med110/hrlee/git/braceal/molecules",
 
     "system_name"    : "3clpro",
-    "residues"       : 303,
-    "init_weights"   : "/gpfs/alpine/proj-shared/med110/hrlee/epoch-60-20200926-003445.pt",
+    "residues"       : 304,
+    "init_weights"   : "/gpfs/alpine/proj-shared/med110/hrlee/304-dim-test-epoch-4-20200928-124333.pt",
     "pdb_file"       : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters/input_protein/prot.pdb",
     "top_file"       : "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters/input_protein/prot.prmtop",
 
