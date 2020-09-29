@@ -140,9 +140,10 @@ def check_runs(cfg_file, run_file):
 def generate_pipeline(cfg):
 
     cfg_file  = cfg['run_cfg_file']  # resource and workload config
-    run_file  = cfg['run_file']  # runs for this campaign
+    run_file  = cfg['run_file']      # runs for this campaign
 
     # setup S1 workload
+    cfg     = ru.Config(cfg=ru.read_json(cfg_file))
     runs    = check_runs(cfg_file, run_file)
 
     if not runs:
@@ -198,8 +199,8 @@ def generate_pipeline(cfg):
         ##     print('skip      3 %s' % name)
         ##     continue
 
-        if rec: print('recompute %d %s' % (rec, name))
-        else  : print('compute   2 %s'  %       name)
+        #if rec: print('recompute %d %s' % (rec, name))
+        #else  : print('compute   2 %s'  %       name)
 
         cpn       = cfg.cpn
         gpn       = cfg.gpn
