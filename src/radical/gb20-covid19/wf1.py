@@ -91,6 +91,8 @@ def check_runs(cfg_file, run_file):
             nodes    = int(elems[2])
             runtime  = int(elems[3])
 
+            runs.append([receptor, smiles, nodes, runtime])
+
         #     assert(receptor)
         #     assert(smiles)
         #     assert(nodes)
