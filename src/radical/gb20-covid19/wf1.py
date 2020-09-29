@@ -220,38 +220,46 @@ def generate_pipeline(cfg):
 
             t.pre_exec = ['. /gpfs/alpine/scratch/mturilli1/med110/radical.pilot.sandbox/s1.to/bin/activate']
 
-            t.executable     = "python3"
-            t.arguments      = ['wf0_master.py', i]
-            t.cpu_threads    = cpn
-            t.input_staging  = [{'source': 'wf0_master.py',
-                                    'target': 'wf0_master.py',
-                                    'action': rp.TRANSFER,
-                                    'flags' : rp.DEFAULT_FLAGS},
-                                    {'source': 'wf0_worker.py',
-                                    'target': 'wf0_worker.py',
-                                    'action': rp.TRANSFER,
-                                    'flags' : rp.DEFAULT_FLAGS},
-                                    {'source': 'configs/wf0.%s.cfg' % name,
-                                    'target': 'wf0.cfg',
-                                    'action': rp.TRANSFER,
-                                    'flags' : rp.DEFAULT_FLAGS},
-                                    {'source': workload.input_dir,
-                                    'target': 'input_dir',
-                                    'action': rp.LINK,
-                                    'flags' : rp.DEFAULT_FLAGS},
-                                    {'source': workload.impress_dir,
-                                    'target': 'impress_md',
-                                    'action': rp.LINK,
-                                    'flags' : rp.DEFAULT_FLAGS},
-                                    {'source': 'read_ligand_dict.py',
-                                    'target': 'read_ligand_dict.py',
-                                    'action': rp.TRANSFER,
-                                    'flags' : rp.DEFAULT_FLAGS},
-                                ]
-            t.output_staging = [{'source': '%s.%s.gz'         % (name, workload.output),
-                                    'target': 'results/%s.%s.gz' % (name, workload.output),
-                                    'action': rp.TRANSFER,
-                                    'flags' : rp.DEFAULT_FLAGS}]
+            t.executable           = "python3"
+            t.arguments            = ['wf0_master.py', i]
+            t.cpu_threads          = cpn
+            t.upload_input_data    = ['wf0_master.py',
+                                      'wf0_worker.py',
+                                      'configs/wf0.%s.cfg > wf0.cfg' % name,
+                                      'read_ligand_dict.py']
+            t.link_input_data      = ['%s > input_dir' % workload.input_dir,
+                                      '%s > impress_md' % workload.impress_dir]
+            t.download_output_data = ['%s.%s.gz > results/%s.%s.gz' %
+                (name, workload.output, name, workload.output)]
+            # t.input_staging  = [{'source': 'wf0_master.py',
+            #                         'target': 'wf0_master.py',
+            #                         'action': rp.TRANSFER,
+            #                         'flags' : rp.DEFAULT_FLAGS},
+            #                         {'source': 'wf0_worker.py',
+            #                         'target': 'wf0_worker.py',
+            #                         'action': rp.TRANSFER,
+            #                         'flags' : rp.DEFAULT_FLAGS},
+            #                         {'source': 'configs/wf0.%s.cfg' % name,
+            #                         'target': 'wf0.cfg',
+            #                         'action': rp.TRANSFER,
+            #                         'flags' : rp.DEFAULT_FLAGS},
+            #                         {'source': workload.input_dir,
+            #                         'target': 'input_dir',
+            #                         'action': rp.LINK,
+            #                         'flags' : rp.DEFAULT_FLAGS},
+            #                         {'source': workload.impress_dir,
+            #                         'target': 'impress_md',
+            #                         'action': rp.LINK,
+            #                         'flags' : rp.DEFAULT_FLAGS},
+            #                         {'source': 'read_ligand_dict.py',
+            #                         'target': 'read_ligand_dict.py',
+            #                         'action': rp.TRANSFER,
+            #                         'flags' : rp.DEFAULT_FLAGS},
+            #                     ]
+            # t.output_staging = [{'source': '%s.%s.gz'         % (name, workload.output),
+            #                      'target': 'results/%s.%s.gz' % (name, workload.output),
+            #                      'action': rp.TRANSFER,
+            #                      'flags' : rp.DEFAULT_FLAGS}]
             s.add_tasks(t)
 
     p.add_stages(s)
