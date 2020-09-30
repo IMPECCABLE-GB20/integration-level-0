@@ -9,7 +9,7 @@ def esmacs(cfg, names, stage, outdir):
 
     for comp in names:
         #print("DEBUG:first loop: %s" % len(s._tasks))
-        for i in range(1, 7):
+        for i in range(1, cfg['n_replicas']):
             #print("DEBUG:second loop:start: %s" % len(s._tasks))
             t = Task()
 
@@ -59,8 +59,9 @@ def generate_esmacs(cfg):
     s1 = esmacs(cfg, esmacs_names, stage="eq1", outdir="equilibration")
     p.add_stages(s1)
 
-    # s2 = esmacs(cfg, esmacs_names, stage="eq2")
-    # p.add_stages(s2)
+    if cfg['type_esmacs'] == 'fg':
+        s2 = esmacs(cfg, esmacs_names, stage="eq2")
+        p.add_stages(s2)
 
     s3 = esmacs(cfg, esmacs_names, stage="sim1", outdir="simulation")
     p.add_stages(s3)

@@ -43,19 +43,6 @@ def wf1_run(appman, cfg, reporter, counter=1):
     appman.run()
 
 # ------------------------------------------------------------------------------
-def wf3_run_cg(appman, cfg, reporter, counter=1):
-    pipelines = []
-
-    # Creates the requested number of concurrent pipelines
-    for i in range(0,counter):
-        pipelines.append(wf3.generate_esmacs(cfg))
-
-    appman.workflow = pipelines
-
-    reporter.header('Executing S3')
-    appman.run()
-
-# ------------------------------------------------------------------------------
 def wf2_run(appman, cfg, reporter, counter=1):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
     p1 = wf2.generate_training_pipeline(cfg)
@@ -83,7 +70,7 @@ def get_wf3_input(appman, cfg):
     appman.run()
 
 # ------------------------------------------------------------------------------
-def wf3_run_fg(appman, cfg, reporter, counter=1):
+def wf3_run(appman, cfg, reporter, counter=1):
     pipelines = []
 
     # Creates the requested number of concurrent pipelines
@@ -92,7 +79,7 @@ def wf3_run_fg(appman, cfg, reporter, counter=1):
 
     appman.workflow = pipelines
 
-    reporter.header('Executing S3')
+    reporter.header('Executing S3%s' % cfg['type_esmacs'])
     appman.run()
 
 
@@ -143,7 +130,7 @@ if __name__ == '__main__':
                 reporter.header('Submit S3')
                 # get_wf3_input(appman, cfg_wf3)
                 counter = 10
-                wf3_run_cg(appman, cfg_wf3, reporter, counter)
+                wf3_run(appman, cfg_wf3_cg, reporter, counter)
                 reporter.header('S3 done')
 
             elif wf == 'wf2':
@@ -155,7 +142,7 @@ if __name__ == '__main__':
                 reporter.header('Submit S3')
                 # get_wf3_input(appman, cfg_wf3)
                 counter = 10
-                wf3_run_fg(appman, cfg_wf3, reporter, counter)
+                wf3_run(appman, cfg_wf3_fg, reporter, counter)
                 reporter.header('S3 done')
 
             else:
