@@ -36,6 +36,7 @@ def ml1_run(appman, cfg, reporter):
 
 # ------------------------------------------------------------------------------
 def wf1_run(appman, cfg, reporter, counter=1):
+    print(cfg)
     p1 = wf1.generate_pipeline(cfg)
     appman.workflow = [p1]
 
@@ -90,15 +91,17 @@ if __name__ == '__main__':
     reporter.title('GB20 COVID-19')
 
     # resource specified as argument
-    if len(sys.argv) == 4:
+    if len(sys.argv) == 5:
         cfg_file = sys.argv[1]
-        cfg_wf2_file = sys.argv[2]
-        cfg_wf3_file = sys.argv[3]
+        cfg_wf1_file = sys.argv[2]
+        cfg_wf2_file = sys.argv[3]
+        cfg_wf3_file = sys.argv[4]
     else:
-        reporter.exit('Usage:\t%s [config.json] [config_wf2.json] [config_wf3.json]\n\n' % sys.argv[0])
+        reporter.exit('Usage:\t%s [config.json] [config_wf1.json] [config_wf2.json] [config_wf3.json]\n\n' % sys.argv[0])
 
     try:
         cfg = ru.Config(cfg=ru.read_json(cfg_file))
+        cfg_wf1 = ru.Config(cfg=ru.read_json(cfg_wf1_file))
         cfg_wf2 = ru.Config(cfg=ru.read_json(cfg_wf2_file))
         cfg_wf3 = ru.Config(cfg=ru.read_json(cfg_wf3_file))
 
