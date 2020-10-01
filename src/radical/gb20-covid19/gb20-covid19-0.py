@@ -137,7 +137,7 @@ if __name__ == '__main__':
                 # get_wf3_input(appman, cfg_wf3)
                 counter = 10
                 wf3_run(appman, cfg_wf3_cg, reporter, counter)
-                reporter.header('S3 done')
+                reporter.header('S3cg done')
 
             elif wf == 'wf2':
                 reporter.header('Submit S2')
@@ -149,7 +149,7 @@ if __name__ == '__main__':
                 # get_wf3_input(appman, cfg_wf3)
                 counter = 10
                 wf3_run(appman, cfg_wf3_fg, reporter, counter)
-                reporter.header('S3 done')
+                reporter.header('S3fg done')
 
             else:
                 raise Exception("ERROR: unrecognized workflow %s" % wf)
