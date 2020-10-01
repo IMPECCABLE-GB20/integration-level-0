@@ -91,19 +91,22 @@ if __name__ == '__main__':
     reporter.title('GB20 COVID-19')
 
     # resource specified as argument
-    if len(sys.argv) == 5:
+    if len(sys.argv) == 6:
         cfg_file = sys.argv[1]
         cfg_wf1_file = sys.argv[2]
         cfg_wf2_file = sys.argv[3]
-        cfg_wf3_file = sys.argv[4]
+        cfg_wf3_cg_file = sys.argv[4]
+        cfg_wf3_fg_file = sys.argv[5]
+
     else:
-        reporter.exit('Usage:\t%s [config.json] [config_wf1.json] [config_wf2.json] [config_wf3.json]\n\n' % sys.argv[0])
+        reporter.exit('Usage:\t%s [config.json] [config_wf1.json] [config_wf2.json] [config_wf3_cg.json] [config_wf3_fg.json]\n\n' % sys.argv[0])
 
     try:
         cfg = ru.Config(cfg=ru.read_json(cfg_file))
         cfg_wf1 = ru.Config(cfg=ru.read_json(cfg_wf1_file))
         cfg_wf2 = ru.Config(cfg=ru.read_json(cfg_wf2_file))
-        cfg_wf3 = ru.Config(cfg=ru.read_json(cfg_wf3_file))
+        cfg_wf3_cg = ru.Config(cfg=ru.read_json(cfg_wf3_cg_file))
+        cfg_wf3_fg = ru.Config(cfg=ru.read_json(cfg_wf3_fg_file))
 
         if not check_environment():
             raise("ERROR: Incorrect environment set up.")
