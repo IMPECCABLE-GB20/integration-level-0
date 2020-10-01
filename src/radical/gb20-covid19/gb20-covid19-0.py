@@ -135,7 +135,7 @@ if __name__ == '__main__':
             elif wf == 'wf3cg':
                 reporter.header('Submit S3')
                 # get_wf3_input(appman, cfg_wf3)
-                counter = 10
+                counter = 20
                 wf3_run(appman, cfg_wf3_cg, reporter, counter)
                 reporter.header('S3cg done')
 

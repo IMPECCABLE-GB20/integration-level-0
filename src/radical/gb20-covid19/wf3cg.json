@@ -1,7 +1,7 @@
 {
     "proj": "med110",
     "work_dir": "/gpfs/alpine/scratch/mturilli1",
-    "data_dir": "wf3",
+    "data_dir": "wf3cg",
     "conda_init": "/sw/summit/python/3.7/anaconda3/5.3.0/etc/profile.d/conda.sh",
     "conda_esmacs_task_env": "workflow-3-4",
     "esmacs_task_modules": "cuda/9.2.148 gcc/7.4.0 spectrum-mpi/10.3.1.2-20200121",
