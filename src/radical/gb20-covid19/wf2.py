@@ -61,7 +61,6 @@ def generate_training_pipeline(cfg):
                 (cfg['base_path'], cfg['base_path'])]
             t1.pre_exec += ['cd %s/MD_exps/%s' % (cfg['base_path'], cfg['system_name'])]
             t1.pre_exec += ['mkdir -p omm_runs_%d && cd omm_runs_%d' % (time_stamp+i, time_stamp+i)]
-            t1.pre_exec += ['export MPLCONFIGDIR=%s' % cfg['base_path']]
 
             t1.executable = ['%s/bin/python' % cfg['conda_openmm']]  # run_openmm.py
             t1.arguments = ['%s/MD_exps/%s/run_openmm.py' % (cfg['base_path'], cfg['system_name'])]
@@ -132,13 +131,14 @@ def generate_training_pipeline(cfg):
                 'ls ${tmp_path}']
 
         t2.pre_exec += ['unset CUDA_VISIBLE_DEVICES', 'export OMP_NUM_THREADS=4']
-        t2.pre_exec += ['export MPLCONFIGDIR=%s' % cfg['base_path']]
 
-        node_cnt_constraint = cfg['md_counts'] * max(1, CUR_STAGE) // 12
-        cmd_cat    = 'cat /dev/null'
-        cmd_jsrun  = 'jsrun -n %s -r 1 -a 6 -c 7 -d packed' % min(cfg['node_counts'], node_cnt_constraint)
+        # - Each node takes 6 ranks
+        # - each rank processes 2 files
+        # - each iteration accumulates files to process
+        cnt_constraint = min(cfg['node_counts'] * 6, cfg['md_counts'] * max(1,
+            CUR_STAGE) // 2)
 
-        t2.executable = ['%s; %s %s/bin/python' % (cmd_cat, cmd_jsrun, cfg['conda_pytorch'])]  # MD_to_CVAE.py
+        t2.executable = ['%s/bin/python' % (cfg['conda_pytorch'])]  # MD_to_CVAE.py
         t2.arguments = [
                 '%s/scripts/traj_to_dset.py' % cfg['molecules_path'],
                 '-t', '$tmp_path',
@@ -157,9 +157,9 @@ def generate_training_pipeline(cfg):
                 '--verbose']
 
         # Add the aggregation task to the aggreagating stage
-        t2.cpu_reqs = {'processes'          : 1,
-                       'process_type'       : None,
-                       'threads_per_process': 164,
+        t2.cpu_reqs = {'processes'          : 1 * cnt_constraint,
+                       'process_type'       : "MPI",
+                       'threads_per_process': 6 * 4,
                        'thread_type'        : 'OpenMP'}
 
         s2.add_tasks(t2)
@@ -172,11 +172,10 @@ def generate_training_pipeline(cfg):
         """
         # learn task
         time_stamp = int(time.time())
-        stages=[]
+        stages = []
         for i in range(num_ML):
             s3 = Stage()
             s3.name = 'learning'
-
 
             t3 = Task()
             # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/CVAE_exps/train_cvae.py
@@ -194,13 +193,12 @@ def generate_training_pipeline(cfg):
             #t3.pre_exec += ['mkdir -p %s && cd %s' % (cvae_dir, cvae_dir)] # model_id creates sub-dir
             # this is for ddp, distributed
             t3.pre_exec += ['unset CUDA_VISIBLE_DEVICES', 'export OMP_NUM_THREADS=4']
-            t3.pre_exec += ['export MPLCONFIGDIR=%s' % cfg['base_path']]
             #pnodes = cfg['node_counts'] // num_ML # partition
             pnodes = 1#max(1, pnodes)
 
             hp = cfg['ml_hpo'][i]
             cmd_cat    = 'cat /dev/null'
-            cmd_jsrun  = 'jsrun -n %s -r 1 -g 6 -a 6 -c 42 -d packed' % pnodes
+            cmd_jsrun  = 'jsrun -n %s -g 6 -a 6 -c 42 -d packed' % pnodes
 
             # VAE config
             # cmd_vae    = '%s/examples/run_vae_dist_summit_entk.sh' % cfg['molecules_path']
@@ -247,12 +245,12 @@ def generate_training_pipeline(cfg):
         #             '-S', 3
         #             ]
 
-            t3.cpu_reqs = {'processes'          : 1,
+            t3.cpu_reqs = {'processes'          : 6,
                            'process_type'       : 'MPI',
                            'threads_per_process': 4,
                            'thread_type'        : 'OpenMP'}
             t3.gpu_reqs = {'processes'          : 1,
-                           'process_type'       : None,
+                           'process_type'       : 'MPI',
                            'threads_per_process': 1,
                            'thread_type'        : 'CUDA'}
 
@@ -275,7 +273,6 @@ def generate_training_pipeline(cfg):
         t4.pre_exec += ['export models=""; for i in `ls -d %s/CVAE_exps/model-cvae_runs*/`; do if [ "$models" != "" ]; then    models=$models","$i; else models=$i; fi; done;cat /dev/null' % cfg['base_path']]
         t4.pre_exec += ['export LANG=en_US.utf-8', 'export LC_ALL=en_US.utf-8']
         t4.pre_exec += ['unset CUDA_VISIBLE_DEVICES', 'export OMP_NUM_THREADS=4']
-        t4.pre_exec += ['export MPLCONFIGDIR=%s' % cfg['base_path']]
 
         cmd_cat = 'cat /dev/null'
         cmd_jsrun = 'jsrun -n %s -a 6 -g 6 -r 1 -c 7' % cfg['node_counts']
@@ -299,12 +296,12 @@ def generate_training_pipeline(cfg):
                         '--batch_size', cfg['batch_size'],
                         '--distributed']
 
-        t4.cpu_reqs = {'processes'          : 1,
-                       'process_type'       : None,
-                       'threads_per_process': 12,
+        t4.cpu_reqs = {'processes'          : 6 * cfg['node_counts'],
+                       'process_type'       : 'MPI',
+                       'threads_per_process': 6 * 4,
                        'thread_type'        : 'OpenMP'}
         t4.gpu_reqs = {'processes'          : 1,
-                       'process_type'       : None,
+                       'process_type'       : 'MPI',
                        'threads_per_process': 1,
                        'thread_type'        : 'CUDA'}
 
