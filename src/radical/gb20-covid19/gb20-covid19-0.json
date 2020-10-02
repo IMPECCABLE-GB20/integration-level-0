@@ -1,17 +1,18 @@
 {
     "pdesc": {
         "resource" : "ornl.summit",
-       #"queue"    : "batch",
-        "queue"    : "debug",
+        "queue"    : "batch",
+        #"queue"    : "debug",
         "schema"   : "local",
-        "nodes"    : 2,
-        "walltime" : 30,
-       #"walltime" : 120,
+        "nodes"    : 20,
+        #"walltime" : 30,
+        "walltime" : 45,
         "cpus_node": 42,
         "gpus_node": 6,
         "project"  : "MED110"
     },
    #"workflows": ["wf2", "wf3fg"]
    #"workflows": ["wf3"]
-    "workflows": ["wf1"]
+   #"workflows": ["wf1"]
+    "workflows": ["wf3cg", "wf2", "wf3fg"]
 }

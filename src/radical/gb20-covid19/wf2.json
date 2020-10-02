@@ -16,7 +16,7 @@
     "model_type"     : "aae",
 
     "CUR_STAGE"      : 0,
-    "MAX_STAGE"      : 2,
+    "MAX_STAGE"      : 1,
     "RETRAIN_FREQ"   : 1,
     "LEN_initial"    : 1,
     "LEN_iter"       : 10,

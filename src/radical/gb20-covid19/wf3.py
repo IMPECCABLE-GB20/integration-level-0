@@ -50,8 +50,8 @@ def generate_esmacs(cfg):
     cfg['run_dir']  = cfg['base_dir']+'/'+cfg['data_dir']
 
     esmacs_names = glob.glob("{}/input/lig*".format(cfg['run_dir']))
-    #print("{}/input/lig*".format(cfg['run_dir']))
-    #print("DEBUG:generate_esmacs:esmacs_names %s" % esmacs_names)
+    print("{}/input/lig*".format(cfg['run_dir']))
+    print("DEBUG:generate_esmacs:esmacs_names %s" % esmacs_names)
 
     p = Pipeline()
     p.name = 'ESMACS'
@@ -60,7 +60,7 @@ def generate_esmacs(cfg):
     p.add_stages(s1)
 
     if cfg['type_esmacs'] == 'fg':
-        s2 = esmacs(cfg, esmacs_names, stage="eq2")
+        s2 = esmacs(cfg, esmacs_names, stage="eq2", outdir="equilibration")
         p.add_stages(s2)
 
     s3 = esmacs(cfg, esmacs_names, stage="sim1", outdir="simulation")
