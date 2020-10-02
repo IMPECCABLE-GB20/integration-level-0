@@ -6,5 +6,7 @@
     "conda_esmacs_task_env": "workflow-3-4",
     "esmacs_task_modules": "cuda/9.2.148 gcc/7.4.0 spectrum-mpi/10.3.1.2-20200121",
     "outlier_path": "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Outlier_search/outlier_pdbs",
-    "top_path": "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters"
+    "top_path": "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters",
+    "type_esmacs": "cg",
+    "n_replicas": 7
 }
