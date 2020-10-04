@@ -5,6 +5,7 @@ from radical.entk import Pipeline, Stage, Task
 def esmacs(cfg, names, stage, outdir):
 
     s = Stage()
+    s.name = 'S3.%s' % stage
     #print("DEBUG:instantiation:  %s" % len(s._tasks))
 
     for comp in names:
@@ -54,14 +55,14 @@ def generate_esmacs(cfg):
     print("DEBUG:generate_esmacs:esmacs_names %s" % esmacs_names)
 
     p = Pipeline()
-    p.name = 'ESMACS'
+    p.name = 'S3.ESMACS'
 
     s1 = esmacs(cfg, esmacs_names, stage="eq1", outdir="equilibration")
     p.add_stages(s1)
 
-    if cfg['type_esmacs'] == 'fg':
-        s2 = esmacs(cfg, esmacs_names, stage="eq2", outdir="equilibration")
-        p.add_stages(s2)
+    # if cfg['type_esmacs'] == 'fg':
+    #     s2 = esmacs(cfg, esmacs_names, stage="eq2", outdir="equilibration")
+    #     p.add_stages(s2)
 
     s3 = esmacs(cfg, esmacs_names, stage="sim1", outdir="simulation")
     p.add_stages(s3)

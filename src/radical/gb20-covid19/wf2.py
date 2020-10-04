@@ -37,7 +37,7 @@ def generate_training_pipeline(cfg):
         Function to generate MD stage.
         """
         s1 = Stage()
-        s1.name = 'MD'
+        s1.name = 'S2.MD'
 
         initial_MD = True
         outlier_filepath = '%s/Outlier_search/restart_points.json' % cfg['base_path']
@@ -106,7 +106,7 @@ def generate_training_pipeline(cfg):
         Function to concatenate the MD trajectory (h5 contact map)
         """
         s2 = Stage()
-        s2.name = 'aggregating'
+        s2.name = 'S2.aggregating'
 
         # Aggregation task
         t2 = Task()
@@ -175,7 +175,7 @@ def generate_training_pipeline(cfg):
         stages = []
         for i in range(num_ML):
             s3 = Stage()
-            s3.name = 'learning'
+            s3.name = 'S2.learning'
 
             t3 = Task()
             # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/CVAE_exps/train_cvae.py
@@ -262,7 +262,7 @@ def generate_training_pipeline(cfg):
 
     def generate_interfacing_stage():
         s4 = Stage()
-        s4.name = 'scanning'
+        s4.name = 'S2.outlier_detection'
 
         # Scaning for outliers and prepare the next stage of MDs
         t4 = Task()
@@ -352,7 +352,7 @@ def generate_training_pipeline(cfg):
         print ('Done')
 
     p = Pipeline()
-    p.name = 'MD_ML'
+    p.name = 'S2.DeepDriveMD'
 
     # --------------------------
     # MD stage
