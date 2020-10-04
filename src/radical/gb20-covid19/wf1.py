@@ -86,16 +86,16 @@ def check_runs(cfg_file, run_file):
 
             assert(len(elems) == 4), line
 
-            receptor = str(elems[0])
-            smiles   = str(elems[1])
-            nodes    = int(elems[2])
-            runtime  = int(elems[3])
+            receptor  = str(elems[0])
+            smiles    = str(elems[1])
+            n_workers = int(elems[2])
+            runtime   = int(elems[3])
 
-            runs.append([receptor, smiles, nodes, runtime])
+            runs.append([receptor, smiles, n_workers, runtime])
 
         #     assert(receptor)
         #     assert(smiles)
-        #     assert(nodes)
+        #     assert(n_workers)
         #     assert(runtime)
 
         #   # print('%s/%s.pdbqt' % (rec_path, receptor))
@@ -130,7 +130,7 @@ def check_runs(cfg_file, run_file):
         #     if n_need > n_have:
         #         perc = int(100 * n_have / n_need)
         #         print('run  %-30s %-25s [%3d%%]' % (receptor, smiles, perc))
-        #         runs.append([receptor, smiles, nodes, runtime])
+        #         runs.append([receptor, smiles, n_workers, runtime])
         #     else:
         #         print('skip %-30s %-25s [100%%]' % (receptor, smiles))
 
@@ -168,7 +168,7 @@ def generate_pipeline(cfg):
 
     workload  = cfg.workload
 
-    for receptor, smiles, nodes, runtime in runs:
+    for receptor, smiles, n_workers, runtime in runs:
 
         print('%30s  %s'   % (receptor, smiles))
         name = '%s_-_%s'   % (receptor, smiles)
@@ -202,16 +202,15 @@ def generate_pipeline(cfg):
         #if rec: print('recompute %d %s' % (rec, name))
         #else  : print('compute   2 %s'  %       name)
 
-        cpn       = cfg.cpn
-        gpn       = cfg.gpn
+        cpw       = cfg.cpw
+        gpw       = cfg.gpw
         n_masters = cfg.n_masters
 
         cfg.workload.receptor = receptor
         cfg.workload.smiles   = smiles
         cfg.workload.name     = name
-        cfg.nodes             = nodes
         cfg.runtime           = runtime
-        cfg.n_workers         = int(nodes / n_masters - 1)
+        cfg.n_workers         = n_workers
         print('n_workers: %d'  % cfg.n_workers)
 
         ru.write_json(cfg, 'configs/wf0.%s.cfg' % name)
@@ -223,7 +222,10 @@ def generate_pipeline(cfg):
 
             t.executable           = "python3"
             t.arguments            = ['wf0_master.py', i]
-            t.cpu_threads          = cpn
+            t.cpu_reqs             = {'processes'          : 1,
+                                      'threads_per_process': 4,
+                                      'thread_type'        : None,
+                                      'process_type'       : None}
             t.upload_input_data    = ['wf0_master.py',
                                       'wf0_worker.py',
                                       'configs/wf0.%s.cfg > wf0.cfg' % name,
