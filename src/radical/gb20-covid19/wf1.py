@@ -222,7 +222,10 @@ def generate_pipeline(cfg):
 
             t.executable           = "python3"
             t.arguments            = ['wf0_master.py', i]
-            t.cpu_threads          = 1 * cfg.smt
+            t.cpu_reqs             = {'processes'          : 1,
+                                      'threads_per_process': 4,
+                                      'thread_type'        : None,
+                                      'process_type'       : None}
             t.upload_input_data    = ['wf0_master.py',
                                       'wf0_worker.py',
                                       'configs/wf0.%s.cfg > wf0.cfg' % name,
