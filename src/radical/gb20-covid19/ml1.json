@@ -7,5 +7,5 @@
     "model": "/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.pt",
     "trt": "/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.trt",
     "userid": "mturilli1",
-    "processes": 120
+    "processes": 30
 }

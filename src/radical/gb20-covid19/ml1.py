@@ -14,7 +14,6 @@ def generate_ml1_pipeline(cfg):
 
     # ML task
     t.pre_exec = [
-        'module reset',
         'module load gcc/7.4.0',
         'module load python/3.6.6-anaconda3-5.3.0',
         'module load cuda/10.1.243',
@@ -47,11 +46,17 @@ def generate_ml1_pipeline(cfg):
         '--distributed'
         ]
 
-    t.gpu_reqs = {
+    t.cpu_reqs = {
         'processes'          : cfg['processes'],
+        'threads_per_process': 4,
+        'thread_type'        : 'OpenMP',
+        'process_type'       : 'MPI'
+        }
+    t.gpu_reqs = {
+        'processes'          : 1,
         'threads_per_process': 1,
-        'thread_type'        : None,
-        'process_type'       : "MPI"
+        'thread_type'        : 'CUDA',
+        'process_type'       : 'MPI'
         }
 
     s.add_tasks(t)
