@@ -7,6 +7,7 @@ import radical.utils as ru
 import radical.pilot as rp
 import radical.entk as entk
 
+import ml1 as ml1
 import wf1 as wf1
 import wf2 as wf2
 import wf3 as wf3
@@ -31,8 +32,11 @@ def get_pilot_description(pdesc):
 
 # ------------------------------------------------------------------------------
 def ml1_run(appman, cfg, reporter):
+    p1 = ml1.generate_ml1_pipeline(cfg)
+    appman.workflow = [p1]
+
     reporter.header('Executing ML1')
-    pass
+    appman.run()
 
 # ------------------------------------------------------------------------------
 def wf1_run(appman, cfg, reporter, counter=1):
@@ -91,18 +95,20 @@ if __name__ == '__main__':
     reporter.title('GB20 COVID-19')
 
     # resource specified as argument
-    if len(sys.argv) == 6:
+    if len(sys.argv) == 7:
         cfg_file = sys.argv[1]
-        cfg_wf1_file = sys.argv[2]
-        cfg_wf2_file = sys.argv[3]
-        cfg_wf3_cg_file = sys.argv[4]
-        cfg_wf3_fg_file = sys.argv[5]
+        cfg_ml1_file = sys.argv[2]
+        cfg_wf1_file = sys.argv[3]
+        cfg_wf2_file = sys.argv[4]
+        cfg_wf3_cg_file = sys.argv[5]
+        cfg_wf3_fg_file = sys.argv[6]
 
     else:
-        reporter.exit('Usage:\t%s [config.json] [config_wf1.json] [config_wf2.json] [config_wf3_cg.json] [config_wf3_fg.json]\n\n' % sys.argv[0])
+        reporter.exit('Usage:\t%s [config.json] [config_ml1.json] [config_wf1.json] [config_wf2.json] [config_wf3_cg.json] [config_wf3_fg.json]\n\n' % sys.argv[0])
 
     try:
         cfg = ru.Config(cfg=ru.read_json(cfg_file))
+        cfg_ml1 = ru.Config(cfg=ru.read_json(cfg_ml1_file))
         cfg_wf1 = ru.Config(cfg=ru.read_json(cfg_wf1_file))
         cfg_wf2 = ru.Config(cfg=ru.read_json(cfg_wf2_file))
         cfg_wf3_cg = ru.Config(cfg=ru.read_json(cfg_wf3_cg_file))
