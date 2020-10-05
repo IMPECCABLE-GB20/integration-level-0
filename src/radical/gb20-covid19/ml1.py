@@ -33,9 +33,9 @@ def generate_ml1_pipeline(cfg):
         '-t'  , '0',
         '-d'  , '${device}',
         '-i'  , '"%s/images_compressed/*.pkl.gz"' % cfg['data_root'],
-        '-o'  , '/gpfs/alpine/proj-shared/med110/cov19_data/scores',
-        '-m'  , '/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.pt',
-        '-trt', '/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.trt',
+        '-o'  , cfg['output_dir'],
+        '-m'  , cfg['model'],
+        '-trt', cfg['trt'],
         '--stage_dir', '/mnt/bb/%s' % cfg['userid'],
         '--num_stage_workers', '4',
         '--output_frequency', '200',
@@ -48,7 +48,7 @@ def generate_ml1_pipeline(cfg):
         ]
 
     t.gpu_reqs = {
-        'processes'          : 120,
+        'processes'          : cfg['processes'],
         'threads_per_process': 1,
         'thread_type'        : None,
         'process_type'       : "MPI"

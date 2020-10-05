@@ -18,19 +18,6 @@ def check_environment():
     return True
 
 # ------------------------------------------------------------------------------
-def get_pilot_description(pdesc):
-    ret = {
-        'resource': pdesc['resource'],
-        'queue'   : pdesc['queue'],
-        'schema'  : pdesc['schema'],
-        'walltime': pdesc['walltime'],
-        'cpus'    : pdesc['cpus_node'] * 4 * pdesc['nodes'],
-        'gpus'    : 6 * pdesc['nodes'],
-        'project' : pdesc['project']
-    }
-    return ret
-
-# ------------------------------------------------------------------------------
 def ml1_run(appman, cfg, reporter):
     p1 = ml1.generate_ml1_pipeline(cfg)
     appman.workflow = [p1]
@@ -117,7 +104,15 @@ if __name__ == '__main__':
         if not check_environment():
             raise("ERROR: Incorrect environment set up.")
 
-        pdesc = get_pilot_description(cfg['pdesc'])
+        pdesc = {
+            'resource': cfg['pdesc']['resource'],
+            'queue'   : cfg['pdesc']['queue'],
+            'schema'  : cfg['pdesc']['schema'],
+            'walltime': cfg['pdesc']['walltime'],
+            'cpus'    : cfg['pdesc']['cpus_node'] * 4 * cfg['pdesc']['nodes'],
+            'gpus'    : 6 * cfg['pdesc']['nodes'],
+            'project' : cfg['pdesc']['project']
+        }
 
         appman = entk.AppManager(
             hostname=os.environ.get('RMQ_HOSTNAME'),
