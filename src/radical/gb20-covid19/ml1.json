@@ -6,6 +6,7 @@
     "output_dir": "/gpfs/alpine/proj-shared/med110/cov19_data/scores",
     "model": "/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.pt",
     "trt": "/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.trt",
+    "ld_lib_path": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/cuda-110/targets/ppc64le-linux/lib",
     "userid": "mturilli1",
     "processes": 30
 }

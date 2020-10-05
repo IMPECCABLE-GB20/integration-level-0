@@ -22,6 +22,7 @@ def generate_ml1_pipeline(cfg):
         'export LANG=en_US.utf-8',
         'source activate %s' % cfg['ml1_conda_env'],
         'export device=${OMPI_COMM_WORLD_LOCAL_RANK:=0}',
+        'export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:%s' % cfg['ld_lib_path'],
         # 'export data_root=%s' % cfg['data_root'],
         'cd %s' % cfg['base_path']
         ]
