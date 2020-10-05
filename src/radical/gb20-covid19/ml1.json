@@ -1,0 +1,7 @@
+{
+    "ml1_conda_env": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/conda_attention_cuda-110_py-36/",
+    "data_root": "/gpfs/alpine/med110/world-shared/ULT911",
+    "base_path": "/gpfs/alpine/med110/scratch/mturilli1/ml1/inference",
+    "python_bin_path": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/conda_attention_cuda-110_py-36/bin",
+    "userid": "mturilli1"
+}
