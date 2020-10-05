@@ -4,6 +4,7 @@ import os
 import sys
 import glob
 import time
+import json
 
 import radical.utils as ru
 import radical.pilot as rp
@@ -32,11 +33,29 @@ class MDMaster(rp.task_overlay.Master):
 
         self._prof.prof('create_start')
 
-        world_size = self._cfg.n_masters
-        name       = self._cfg.workload.name
-        rank       = self._cfg.idx
-        chunk      = self._cfg.workload.chunksize
+        name = self._cfg.workload.name
 
+        # create an initial list of work items to be distributed to the workers.
+        # Work items MUST be serializable dictionaries.
+        for i in range(0, cfg['MAX_STAGE']):
+            uid  = '%s.request.%06d' % (name, i)
+
+            print('=== uid:', uid)
+
+            item = {'uid'  :   uid,
+                    'mode' :  'exec', # popen call for a executable task
+                    'cores': 1,
+                    'gpus' : 1,
+                    'data' : {
+                        'exe' : '%s/bin/python' % cfg['conda_openmm'],
+                        'args': ['%s/MD_exps/%s/run_openmm.py' % (cfg['base_path'], cfg['system_name'])],
+                        # for exports
+                        'env' : {
+                            'PYTHONPATH': '%s/MD_exps:%s/MD_exps/MD_utils:$PYTHONPATH' %
+                                (cfg['base_path'], cfg['base_path']),
+
+                                       }}}
+            self.request(item)
 
         self._prof.prof('create_stop')
 
@@ -58,6 +77,27 @@ if __name__ == '__main__':
     n_nodes    = cfg.nodes
     cpn        = cfg.cpn
     gpn        = cfg.gpn
+
+    # Prepare dirlist in case we are iterating and we have detected outliers
+    initial_MD = True
+    outlier_filepath = '%s/Outlier_search/restart_points.json' % cfg['base_path']
+
+    if os.path.exists(outlier_filepath):
+        initial_MD = False
+        outlier_file = open(outlier_filepath, 'r')
+        outlier_list = json.load(outlier_file)
+        outlier_file.close()
+
+    # NOTE: pre-exec can go here as in wf0 cfg to load the python environment
+    # for HOMOGENEOUS task.
+    time_stamp = int(time.time())
+    cfg.worker_descr['pre_exec'].append(
+        'conda activate %s' % cfg['conda_openmm'])
+    cfg.worker_descr['pre_exec'].append(
+        'cd %s/MD_exps/%s' % (cfg['base_path'], cfg['system_name']))
+    cfg.worker_descr['pre_exec'].append(
+        'mkdir -p omm_runs_%d && cd omm_runs_%d' % (time_stamp+i, time_stamp+i))
+
     descr      = cfg.worker_descr
 
     # one node is used by master.  Alternatively (and probably better), we could
