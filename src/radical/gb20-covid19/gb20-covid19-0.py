@@ -18,7 +18,7 @@ def check_environment():
     return True
 
 # ------------------------------------------------------------------------------
-def ml1_run(appman, cfg, reporter):
+def ml1_run(appman, cfg, reporter, counter=1):
     pipelines = []
 
     # Creates the requested number of concurrent pipelines
