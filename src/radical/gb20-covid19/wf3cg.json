@@ -8,5 +8,6 @@
     "outlier_path": "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Outlier_search/outlier_pdbs",
     "top_path": "/gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/Parameters",
     "type_esmacs": "cg",
+    # python range(1,n_replicas)
     "n_replicas": 7
 }
