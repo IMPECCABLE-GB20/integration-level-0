@@ -63,7 +63,7 @@ def generate_esmacs(cfg):
     print("DEBUG:generate_esmacs:esmacs_names %s" % esmacs_names)
 
     p = Pipeline()
-    p.name = 'S3.ESMACS'
+    p.name = 'S3.ESMACS.%s' % cfg['type_esmacs'].upper()
 
     s1 = esmacs(cfg, esmacs_names, stage="eq1", outdir="equilibration")
     p.add_stages(s1)
