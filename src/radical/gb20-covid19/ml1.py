@@ -12,6 +12,7 @@ def generate_ml1_pipeline(cfg):
     s = Stage()
     t = Task()
 
+    # Native RCT
     # ML task
     # t.pre_exec = [
     #     '. /sw/summit/lmod/lmod/init/profile',
@@ -27,7 +28,6 @@ def generate_ml1_pipeline(cfg):
     #     # 'export data_root=%s' % cfg['data_root'],
     #     'cd %s' % cfg['base_path']
     #     ]
-
     # t.executable = ['%s/python' % cfg['python_bin_path']]
     # t.arguments = [
     #     '-u'  , 'infer_images.py',
@@ -48,6 +48,7 @@ def generate_ml1_pipeline(cfg):
     #     '--distributed'
     #     ]
 
+    # Bash wrapper
     t.executable = ['%s/ml1.sh' % cfg['exec_path']]
     t.arguments = ['--distributed', cfg['ld_lib_path'], cfg['data_root'],
                    cfg['base_path'], cfg['ml1_conda_env'], cfg['output_dir'],
