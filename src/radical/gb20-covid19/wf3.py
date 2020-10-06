@@ -32,7 +32,10 @@ def esmacs(cfg, names, stage, outdir):
 
             # Bash wrapper
             t.executable = 'wf3.sh'
-            t.arguments  = [comp, i, outdir, stage]
+            t.arguments  = [comp, i, outdir, stage,
+                            cfg['conda_init'],
+                            cfg['conda_esmacs_task_env'],
+                            cfg['esmacs_task_modules']]
 
             t.cpu_reqs = {
                 'processes': 1,

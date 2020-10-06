@@ -4,16 +4,16 @@
 # $2 = i
 # $3 = outdir
 # $4 = stage
+# $5 = cfg['conda_init']
+# $6 = cfg['conda_esmacs_task_env']
+# $7 = cfg['esmacs_task_modules']
 
 . /sw/summit/lmod/lmod/init/profile
 export WDIR="${1}" # ".format(comp),
 
-. /sw/summit/python/3.7/anaconda3/5.3.0/etc/profile.d/conda.sh
-conda activate workflow-3-4
-
-module load cuda/9.2.148
-module load gcc/7.4.0
-module load spectrum-mpi/10.3.1.2-20200121
+. $5
+conda activate $6
+module load $7
 
 mkdir -p ${WDIR}/replicas/rep${2}/${3}  # .format(i, outdir),
 cd ${WDIR}/replicas/rep${2}/${3}        # ".format(i, outdir),

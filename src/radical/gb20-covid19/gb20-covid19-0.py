@@ -19,8 +19,13 @@ def check_environment():
 
 # ------------------------------------------------------------------------------
 def ml1_run(appman, cfg, reporter):
-    p1 = ml1.generate_ml1_pipeline(cfg)
-    appman.workflow = [p1]
+    pipelines = []
+
+    # Creates the requested number of concurrent pipelines
+    for i in range(0,counter):
+        pipelines.append(ml1.generate_ml1_pipeline(cfg))
+
+    appman.workflow = pipelines
 
     reporter.header('Executing ML1')
     appman.run()
@@ -121,7 +126,8 @@ if __name__ == '__main__':
 
             elif wf == 'wf1':
                 reporter.header('Submit S1')
-                wf1_run(appman, cfg_wf1, reporter)
+                # counter = cfg['nvdm']
+                wf1_run(appman, cfg_wf1, reporter, counter)
                 reporter.header('S1 done')
 
             elif wf == 'wf3cg':
@@ -134,7 +140,7 @@ if __name__ == '__main__':
             elif wf == 'wf2':
                 reporter.header('Submit S2')
                 counter = 2
-                wf2_run(appman, cfg_wf2, reporter)
+                wf2_run(appman, cfg_wf2, reporter, counter)
                 reporter.header('S2 done')
 
             elif wf == 'wf3fg':
