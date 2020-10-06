@@ -14,20 +14,25 @@ def esmacs(cfg, names, stage, outdir):
             #print("DEBUG:second loop:start: %s" % len(s._tasks))
             t = Task()
 
-            t.pre_exec = [
-                ". /sw/summit/lmod/lmod/init/profile",
-                "export WDIR=\"{}\"".format(comp),
-                ". {}".format(cfg['conda_init']),
-                "conda activate {}".format(cfg['conda_esmacs_task_env']),
-                "module load {}".format(cfg['esmacs_task_modules']),
-                "mkdir -p $WDIR/replicas/rep{}/{}".format(i, outdir),
-                "cd $WDIR/replicas/rep{}/{}".format(i, outdir),
-                "rm -f {}.log {}.xml {}.dcd {}.chk".format(stage, stage, stage, stage),
-                "export OMP_NUM_THREADS=1"]
+            # RCT native
+            # t.pre_exec = [
+            #     ". /sw/summit/lmod/lmod/init/profile",
+            #     "export WDIR=\"{}\"".format(comp),
+            #     ". {}".format(cfg['conda_init']),
+            #     "conda activate {}".format(cfg['conda_esmacs_task_env']),
+            #     "module load {}".format(cfg['esmacs_task_modules']),
+            #     "mkdir -p $WDIR/replicas/rep{}/{}".format(i, outdir),
+            #     "cd $WDIR/replicas/rep{}/{}".format(i, outdir),
+            #     "rm -f {}.log {}.xml {}.dcd {}.chk".format(stage, stage, stage, stage),
+            #     "export OMP_NUM_THREADS=1"]
 
-            t.executable = 'python3'
-            t.arguments = ['$WDIR/{}.py'.format(stage)]
-            t.post_exec = []
+            # t.executable = 'python3'
+            # t.arguments = ['$WDIR/{}.py'.format(stage)]
+            # t.post_exec = []
+
+            # Bash wrapper
+            t.executable = 'wf3.sh'
+            t.arguments  = [comp, i, outdir, stage]
 
             t.cpu_reqs = {
                 'processes': 1,
