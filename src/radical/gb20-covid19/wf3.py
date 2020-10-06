@@ -15,6 +15,7 @@ def esmacs(cfg, names, stage, outdir):
             t = Task()
 
             t.pre_exec = [
+                ". /sw/summit/lmod/lmod/init/profile",
                 "export WDIR=\"{}\"".format(comp),
                 ". {}".format(cfg['conda_init']),
                 "conda activate {}".format(cfg['conda_esmacs_task_env']),

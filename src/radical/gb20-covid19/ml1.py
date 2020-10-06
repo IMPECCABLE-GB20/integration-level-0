@@ -14,6 +14,7 @@ def generate_ml1_pipeline(cfg):
 
     # ML task
     t.pre_exec = [
+        '. /sw/summit/lmod/lmod/init/profile',
         'module load gcc/7.4.0',
         'module load python/3.6.6-anaconda3-5.3.0',
         'module load cuda/10.1.243',

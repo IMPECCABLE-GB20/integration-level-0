@@ -8,5 +8,5 @@
     "trt": "/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.trt",
     "ld_lib_path": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/cuda-110/targets/ppc64le-linux/lib",
     "userid": "mturilli1",
-    "processes": 30
+    "processes": 120
 }

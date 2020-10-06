@@ -37,6 +37,7 @@ def wf1_run(appman, cfg, reporter, counter=1):
 # ------------------------------------------------------------------------------
 def wf2_run(appman, cfg, reporter, counter=1):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
+    
     p1 = wf2.generate_training_pipeline(cfg)
     appman.workflow = [p1]
 
@@ -136,12 +137,13 @@ if __name__ == '__main__':
             elif wf == 'wf3cg':
                 reporter.header('Submit S3')
                 # get_wf3_input(appman, cfg_wf3)
-                counter = 20
+                counter = 40
                 wf3_run(appman, cfg_wf3_cg, reporter, counter)
                 reporter.header('S3cg done')
 
             elif wf == 'wf2':
                 reporter.header('Submit S2')
+                counter = 2
                 wf2_run(appman, cfg_wf2, reporter)
                 reporter.header('S2 done')
 

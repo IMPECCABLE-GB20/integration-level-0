@@ -109,7 +109,10 @@ def generate_pipeline(cfg):
         for i in range(n_masters):
             t = Task()
 
-            t.pre_exec = ['. /gpfs/alpine/scratch/mturilli1/med110/radical.pilot.sandbox/s1.to/bin/activate']
+            t.pre_exec = [
+                '. /sw/summit/lmod/lmod/init/profile',
+                '. /gpfs/alpine/scratch/mturilli1/med110/radical.pilot.sandbox/s1.to/bin/activate'
+            ]
 
             t.executable           = "python3"
             t.arguments            = ['wf0_master.py', i]
