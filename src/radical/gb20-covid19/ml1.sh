@@ -20,21 +20,21 @@ module load hdf5/1.10.4
 export LC_ALL=en_US.utf-8
 export LANG=en_US.utf-8
 export device=${OMPI_COMM_WORLD_LOCAL_RANK:=0}
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$2         # %s' % cfg['ld_lib_path'],
-export data_root=$3                                  # %s' % cfg['data_root'],
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${2}       # %s' % cfg['ld_lib_path'],
+export data_root=${3}                                # %s' % cfg['data_root'],
 
-cd $4                                                # %s' % cfg['base_path']
-source activate $5
+cd ${4}                                              # %s' % cfg['base_path']
+source activate ${5}
 
 # unimproved run
-python -u infer_images.py \
+python3 -u infer_images.py \
     -t 0 \
     -d ${device} \
     -i "${data_root}/images_compressed/*.pkl.gz" \
-    -o $6 \
-    -m $7 \
-    -trt $8 \
-    --stage_dir /mnt/bb/$9 \
+    -o ${6} \
+    -m ${7} \
+    -trt ${8} \
+    --stage_dir /mnt/bb/${9} \
     --num_stage_workers 4 \
     --output_frequency 200 \
     --update_frequency 10 \
