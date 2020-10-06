@@ -37,30 +37,20 @@ def wf1_run(appman, cfg, reporter, counter=1):
 # ------------------------------------------------------------------------------
 def wf2_run(appman, cfg, reporter, counter=1):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
-    
-    p1 = wf2.generate_training_pipeline(cfg)
-    appman.workflow = [p1]
+    pipelines = []
+
+    # Creates the requested number of concurrent pipelines
+    for i in range(0,counter):
+        pipelines.append(wf2.generate_training_pipeline(cfg))
+
+    appman.workflow = pipelines
 
     reporter.header('Executing S2')
     appman.run()
 
 # ------------------------------------------------------------------------------
 def get_wf3_input(appman, cfg):
-    # Assuming shared filesystem on login node this can be executed by the
-    # script instead of EnTK.
-    p = entk.Pipeline()
-    p.name = 'get_wf3_input'
-    s = entk.Stage()
-
-    t = entk.Task()
-    t.executable = ['python3']
-    t.arguments = ['gather.py', '-f', cfg['outlier_path'], '-p', cfg['top_path']]
-
-    s.add_tasks(t)
-    p.add_stages(s)
-    appman.workflow = [p]
-
-    appman.run()
+    pass
 
 # ------------------------------------------------------------------------------
 def wf3_run(appman, cfg, reporter, counter=1):
