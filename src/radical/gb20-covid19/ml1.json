@@ -1,4 +1,5 @@
 {
+    "exec_path": "/ccs/home/mturilli1/gb20/integration-level-0/src/radical/gb20-covid19",
     "ml1_conda_env": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/conda_attention_cuda-110_py-36/",
     "data_root": "/gpfs/alpine/med110/world-shared/ULT911",
     "base_path": "/gpfs/alpine/med110/scratch/mturilli1/ml1/inference",
