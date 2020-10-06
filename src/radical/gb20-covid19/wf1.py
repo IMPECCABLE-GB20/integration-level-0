@@ -76,7 +76,7 @@ def generate_pipeline(cfg):
 
     # setup EnTK pipeline
     p = Pipeline()
-    p.name = 'S1-RAPTOR'
+    p.name = 'S1.RAPTOR'
     s = Stage()
 
     # create cfg
@@ -127,7 +127,7 @@ def generate_pipeline(cfg):
             t.link_input_data      = ['%s > input_dir' % workload.input_dir]
             #t.download_output_data = ['%s.%s.gz > results/%s.%s.gz' %
             #    (name, workload.output, name, workload.output)]
-            
+
             s.add_tasks(t)
 
     p.add_stages(s)

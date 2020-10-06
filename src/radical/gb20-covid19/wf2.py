@@ -54,7 +54,7 @@ def generate_training_pipeline(cfg):
             t1 = Task()
 
             # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/MD_exps/fs-pep/run_openmm.py
-            t1.pre_exec += ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
+            t1.pre_exec  = ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
             t1.pre_exec += ['module load cuda/9.1.85']
             t1.pre_exec += ['conda activate %s' % cfg['conda_openmm']]
             t1.pre_exec += ['export PYTHONPATH=%s/MD_exps:%s/MD_exps/MD_utils:$PYTHONPATH' %
@@ -113,7 +113,6 @@ def generate_training_pipeline(cfg):
 
         # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/MD_to_CVAE/MD_to_CVAE.py
         t2.pre_exec = [
-                '. /sw/summit/lmod/lmod/init/profile',
                 '. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh',
                 'conda activate %s' % cfg['conda_pytorch'],
                 'export LANG=en_US.utf-8',
@@ -180,8 +179,7 @@ def generate_training_pipeline(cfg):
 
             t3 = Task()
             # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/CVAE_exps/train_cvae.py
-            t3.pre_exec  = ['. /sw/summit/lmod/lmod/init/profile',
-                            '. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
+            t3.pre_exec  = ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
             t3.pre_exec += ['module load gcc/7.4.0',
                             'module load cuda/10.1.243',
                             'module load hdf5/1.10.4',
@@ -264,13 +262,12 @@ def generate_training_pipeline(cfg):
 
     def generate_interfacing_stage():
         s4 = Stage()
-        s4.name = 'S2.outlier_detection'
+        s4.name = 'S2.outlier'
 
         # Scaning for outliers and prepare the next stage of MDs
         t4 = Task()
 
-        t4.pre_exec  = ['. /sw/summit/lmod/lmod/init/profile']
-        t4.pre_exec += ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
+        t4.pre_exec  = ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
         t4.pre_exec += ['conda activate %s' % cfg['conda_pytorch']]
         t4.pre_exec += ['mkdir -p %s/Outlier_search/outlier_pdbs' % cfg['base_path']]
         t4.pre_exec += ['export models=""; for i in `ls -d %s/CVAE_exps/model-cvae_runs*/`; do if [ "$models" != "" ]; then    models=$models","$i; else models=$i; fi; done;cat /dev/null' % cfg['base_path']]
