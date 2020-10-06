@@ -11,6 +11,7 @@
     "ld_lib_path": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/cuda-110/targets/ppc64le-linux/lib",
     "cuda_ver": 110,
     "rdbase": "/gpfs/alpine/ven201/world-shared/tkurth/rdkit/rdkit",
+    "scratch_dir": "/gpfs/alpine/med110/scratch/mturilli1",
     "userid": "mturilli1",
     "processes": 120
 }

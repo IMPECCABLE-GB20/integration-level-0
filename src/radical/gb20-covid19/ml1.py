@@ -55,7 +55,7 @@ def generate_ml1_pipeline(cfg):
     t.arguments = ['--distributed', cfg['ld_lib_path'], cfg['data_root'],
                    cfg['base_path'], cfg['ml1_conda_env'], cfg['output_dir'],
                    cfg['model'], cfg['trt'], cfg['userid'], cfg['env_dir'],
-                   cfg['rdbase']]
+                   cfg['rdbase'], cfg['scratch_dir']]
 
     t.cpu_reqs = {
         'processes'          : cfg['processes'],

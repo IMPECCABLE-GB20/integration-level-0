@@ -11,6 +11,7 @@
 # $9 = cfg['userid']
 # $10 = cfg['env_dir']
 # $11 = cfg['rdbase']
+# $12 = cfg['scratch_dir']
 
 PYTHON_VER=3.6
 CUDA_VER=11.0
@@ -37,6 +38,8 @@ export LANG=en_US.utf-8
 export device=${OMPI_COMM_WORLD_LOCAL_RANK:=0}
 # export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${2}       # %s' % cfg['ld_lib_path'],
 export data_root=${3}                                # %s' % cfg['data_root'],
+export MPLCONFIGDIR=${12}
+export FONTCONFIG_PATH=/etc/fonts
 
 cd ${4}                                              # %s' % cfg['base_path']
 
