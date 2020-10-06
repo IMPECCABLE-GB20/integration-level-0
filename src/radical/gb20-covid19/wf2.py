@@ -54,7 +54,6 @@ def generate_training_pipeline(cfg):
             t1 = Task()
 
             # https://github.com/radical-collaboration/hyperspace/blob/MD/microscope/experiments/MD_exps/fs-pep/run_openmm.py
-            t1.pre_exec  = ['. /sw/summit/lmod/lmod/init/profile']
             t1.pre_exec += ['. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh']
             t1.pre_exec += ['module load cuda/9.1.85']
             t1.pre_exec += ['conda activate %s' % cfg['conda_openmm']]

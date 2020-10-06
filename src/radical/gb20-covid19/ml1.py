@@ -15,14 +15,15 @@ def generate_ml1_pipeline(cfg):
     # Native RCT
     # ML task
     t.pre_exec = [
-        # '. /sw/summit/lmod/lmod/init/profile',
+        '. /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh',
         'module load gcc/7.4.0',
         'module load python/3.6.6-anaconda3-5.3.0',
         'module load cuda/10.1.243',
         'module load hdf5/1.10.4',
         'export LC_ALL=en_US.utf-8',
         'export LANG=en_US.utf-8',
-        'source activate %s' % cfg['ml1_conda_env'],
+        #'source activate %s' % cfg['ml1_conda_env'],
+        'conda activate %s' % cfg['ml1_conda_env'],
         'export device=${OMPI_COMM_WORLD_LOCAL_RANK:=0}',
         'export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:%s' % cfg['ld_lib_path'],
         # 'export data_root=%s' % cfg['data_root'],
