@@ -1,0 +1,17 @@
+{
+    "exec_path": "/ccs/home/mturilli1/gb20/integration-level-0/src/radical/gb20-covid19",
+    "ml1_conda_env": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/conda_attention_cuda-110_py-36/",
+    "env_dir": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env",
+    "data_root": "/gpfs/alpine/med110/world-shared/ULT911",
+    "base_path": "/gpfs/alpine/med110/scratch/mturilli1/ml1/inference",
+    "python_bin_path": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/conda_attention_cuda-110_py-36/bin",
+    "output_dir": "/gpfs/alpine/med110/scratch/mturilli1/ml1/output",
+    "model": "/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.pt",
+    "trt": "/gpfs/alpine/proj-shared/med110/tkurth/attention_meta/v2/model_6W02.trt",
+    "ld_lib_path": "/gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/cuda-110/targets/ppc64le-linux/lib",
+    "cuda_ver": 110,
+    "rdbase": "/gpfs/alpine/ven201/world-shared/tkurth/rdkit/rdkit",
+    "scratch_dir": "/gpfs/alpine/med110/scratch/mturilli1",
+    "userid": "mturilli1",
+    "processes": 840
+}

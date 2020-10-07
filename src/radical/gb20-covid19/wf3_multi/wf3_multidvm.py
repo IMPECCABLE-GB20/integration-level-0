@@ -14,6 +14,8 @@ if __name__ == '__main__':
 
     if len(sys.argv) == 2:
         cfg_file = sys.argv[1]
+    else:
+        reporter.exit('Usage:\t%s [config.json]\n\n' % sys.argv[0])
 
     session = rp.Session()
 
@@ -27,7 +29,7 @@ if __name__ == '__main__':
             'project'      : cfg['pdesc']['project'],
             'queue'        : cfg['pdesc']['queue'],
             'access_schema': cfg['pdesc']['schema'],
-            'runtime'      : cfg['pdesc']['runtime'],
+            'runtime'      : cfg['pdesc']['walltime'],
             'cores'        : cfg['pdesc']['cpus_node'] * 4 * cfg['pdesc']['nodes'],
             'gpus'         : 6 * cfg['pdesc']['nodes']
         }
@@ -39,7 +41,7 @@ if __name__ == '__main__':
         pilot = pmgr.submit_pilots(pdesc)
         umgr.add_pilots(pilot)
 
-        n_tasks = 1024
+        n_tasks = cfg['n_tasks']
         report.header('submit %d units' % n_tasks)
         report.progress_tgt(n_tasks, label='create')
 
@@ -49,10 +51,10 @@ if __name__ == '__main__':
             cud = rp.ComputeUnitDescription()
 
             cud.executable = '%s/wf3.sh' % cfg['work_dir']
-            cud.args = [cfg['lig_dir'], 1, 'outdir', 'stage',
-                        cfg['conda_init'],
-                        cfg['conda_esmacs_task_env'],
-                        cfg['esmacs_task_modules']]
+            cud.arguments  = [cfg['lig_dir'], 1, 'outdir', 'stage',
+                              cfg['conda_init'],
+                              cfg['conda_esmacs_task_env'],
+                              cfg['esmacs_task_modules']]
 
             cud.cpu_processes   = 1
             cud.cpu_threads     = 4
