@@ -1,17 +1,16 @@
 {
     "pdesc": {
         "resource" : "ornl.summit",
-        "queue"    : "batch",
-        #"queue"    : "debug",
+        "queue"    : "debug",
         "schema"   : "local",
         "nodes"    : 1,
-        #"walltime" : 30,
-        "walltime" : 45,
+        "walltime" : 30,
         "cpus_node": 42,
         "gpus_node": 6,
         "project"  : "MED110"
     },
 
+    "n_tasks": 6,
     "work_dir": "/gpfs/alpine/med110/world-shared/mturilli/gb20/",
     "lig_dir": "/gpfs/alpine/med110/world-shared/mturilli/gb20/wf3cg/input/lig0",
     "data_dir": "wf3cg",
