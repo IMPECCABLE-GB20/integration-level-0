@@ -51,6 +51,7 @@ def generate_ml1_pipeline(cfg):
     #     ]
 
     # Bash wrapper
+    t.pre_exec = ['launcher=$(which jsrun)', 'alias jsrun="strace $launcher"']
     t.executable = ['%s/ml1.sh' % cfg['exec_path']]
     t.arguments = ['--distributed', cfg['ld_lib_path'], cfg['data_root'],
                    cfg['base_path'], cfg['ml1_conda_env'], cfg['output_dir'],
