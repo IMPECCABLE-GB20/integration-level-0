@@ -48,7 +48,7 @@ if __name__ == '__main__':
         for i in range(0, n_tasks):
             cud = rp.ComputeUnitDescription()
 
-            cud.executable = '%s/wf3.sh' % cfg['lig_dir']
+            cud.executable = '%s/wf3.sh' % cfg['work_dir']
             cud.args = [cfg['lig_dir'], 1, 'outdir', 'stage',
                         cfg['conda_init'],
                         cfg['conda_esmacs_task_env'],

@@ -1,0 +1,18 @@
+{
+    "worker_descr" : {
+    "executable"   : "./wf2_md_worker.py",
+    "pre_exec"     : [
+        "export RADICAL_PROFILE=True",
+        ". /sw/summit/python/3.6/anaconda3/5.3.0/etc/profile.d/conda.sh",
+        "module load cuda/9.1.85",
+        "conda activate /gpfs/alpine/proj-shared/med110/conda/openmm",
+        "cd /gpfs/alpine/scratch/mturilli1/med110/DrugWorkflows/workflow-2/MD_exps/3clpro",
+        "export PATH=$(pwd):$PATH",
+        "echo '=== worker script'",
+        "which python3",
+        "radical-stack"
+        ]
+    },
+
+    "conda_openmm"   : "/gpfs/alpine/proj-shared/med110/conda/openmm"
+}

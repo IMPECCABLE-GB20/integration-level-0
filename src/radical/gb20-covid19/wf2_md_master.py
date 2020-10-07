@@ -98,7 +98,7 @@ if __name__ == '__main__':
     cfg.worker_descr['pre_exec'].append(
         'mkdir -p omm_runs_%d && cd omm_runs_%d' % (time_stamp+i, time_stamp+i))
 
-    descr      = cfg.worker_descr
+    descr = cfg.worker_descr
 
     # one node is used by master.  Alternatively (and probably better), we could
     # reduce one of the worker sizes by one core.  But it somewhat depends on
