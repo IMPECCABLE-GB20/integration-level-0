@@ -18,8 +18,7 @@ module load $7
 mkdir -p ${WDIR}/replicas/rep${2}/${3}  # .format(i, outdir),
 cd ${WDIR}/replicas/rep${2}/${3}        # ".format(i, outdir),
 
-# rm -f ${4}.log ${4}.xml ${4}.dcd ${4}.chk # ".format(stage, stage, stage, stage),
 export OMP_NUM_THREADS=1
 
-python3 ${WDIR}/eq1.py    # '.format(stage)]
+python3 ${WDIR}/eq1.py
 python3 ${WDIR}/sim1.py
