@@ -44,9 +44,10 @@ def wf2_run(appman, cfg, reporter, counter=1):
     cfg['node_counts'] = cfg['md_counts'] // cfg['gpu_per_node']
     pipelines = []
 
-    # Creates the requested number of concurrent pipelines
+    # Creates the requested number of concurrent pipelines\
+    base = cfg['data_dir']
     for i in range(0, counter):
-        cfg['base_dir'] = cfg['base_dir']+'/'+str(i)
+        cfg['base_dir'] = base+'/'+str(i)
         pipelines.append(wf2.generate_training_pipeline(cfg))
 
     appman.workflow = pipelines
@@ -63,8 +64,9 @@ def wf3_run(appman, cfg, reporter, counter=1):
     pipelines = []
 
     # Creates the requested number of concurrent pipelines
+    base = cfg['data_dir']
     for i in range(0, counter):
-        cfg['data_dir'] = cfg['data_dir']+'/'+str(i)
+        cfg['data_dir'] = base+'/'+str(i)
         pipelines.append(wf3.generate_esmacs(cfg))
 
     appman.workflow = pipelines
