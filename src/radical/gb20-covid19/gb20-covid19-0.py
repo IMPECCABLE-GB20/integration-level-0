@@ -45,9 +45,9 @@ def wf2_run(appman, cfg, reporter, counter=1):
     pipelines = []
 
     # Creates the requested number of concurrent pipelines\
-    base = cfg['base_dir']
+    base = cfg['base_path']
     for i in range(0, counter):
-        cfg['base_dir'] = base+'/'+str(i)
+        cfg['base_path'] = base+'/'+str(i)
         pipelines.append(wf2.generate_training_pipeline(cfg))
 
     appman.workflow = pipelines
