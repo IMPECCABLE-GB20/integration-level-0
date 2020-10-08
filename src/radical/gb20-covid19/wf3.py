@@ -68,9 +68,8 @@ def generate_esmacs(cfg):
     s1 = esmacs(cfg, esmacs_names, stage="eq1", outdir="equilibration")
     p.add_stages(s1)
 
-    # if cfg['type_esmacs'] == 'fg':
-    #     s2 = esmacs(cfg, esmacs_names, stage="eq2", outdir="equilibration")
-    #     p.add_stages(s2)
+    # s2 = esmacs(cfg, esmacs_names, stage="eq2", outdir="equilibration")
+    # p.add_stages(s2)
 
     s3 = esmacs(cfg, esmacs_names, stage="sim1", outdir="simulation")
     p.add_stages(s3)
