@@ -23,7 +23,7 @@ def esmacs(cfg, names, stage, outdir):
                 "module load {}".format(cfg['esmacs_task_modules']),
                 "mkdir -p $WDIR/replicas/rep{}/{}".format(i, outdir),
                 "cd $WDIR/replicas/rep{}/{}".format(i, outdir),
-                #"rm -f {}.log {}.xml {}.dcd {}.chk".format(stage, stage, stage, stage),
+                "rm -f {}.log {}.xml {}.dcd {}.chk".format(stage, stage, stage, stage),
                 "export OMP_NUM_THREADS=1"]
 
             t.executable = 'python3'
