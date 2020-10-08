@@ -45,7 +45,8 @@ def wf2_run(appman, cfg, reporter, counter=1):
     pipelines = []
 
     # Creates the requested number of concurrent pipelines
-    for i in range(0,counter):
+    for i in range(0, counter):
+        cfg['base_dir'] = cfg['base_dir']+'/'+i
         pipelines.append(wf2.generate_training_pipeline(cfg))
 
     appman.workflow = pipelines
@@ -62,7 +63,8 @@ def wf3_run(appman, cfg, reporter, counter=1):
     pipelines = []
 
     # Creates the requested number of concurrent pipelines
-    for i in range(0,counter):
+    for i in range(0, counter):
+        cfg['data_dir'] = cfg['data_dir']+'/'+i
         pipelines.append(wf3.generate_esmacs(cfg))
 
     appman.workflow = pipelines
@@ -121,7 +123,7 @@ if __name__ == '__main__':
         for wf in cfg['workflows']:
             if wf == 'ml1':
                 reporter.header('Submit ML1')
-                counter = 1  
+                counter = 1
                 ml1_run(appman, cfg_ml1, reporter, counter)
                 reporter.header('ML1 done')
 
@@ -148,7 +150,7 @@ if __name__ == '__main__':
             elif wf == 'wf3fg':
                 reporter.header('Submit S3')
                 # get_wf3_input(appman, cfg_wf3)
-                counter = 1    # == number of nodes / 4 
+                counter = 1    # == number of nodes / 4
                 wf3_run(appman, cfg_wf3_fg, reporter, counter)
                 reporter.header('S3fg done')
 
