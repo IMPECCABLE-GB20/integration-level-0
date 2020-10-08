@@ -1,18 +1,15 @@
 {
     "pdesc": {
-        "resource" : "ornl.summit",
-        "queue"    : "batch",
-        #"queue"    : "debug",
+        "resource" : "ornl.summit_prte",
+        #"queue"    : "batch",
+        "queue"    : "debug",
         "schema"   : "local",
+        # NOTE: You must add a node for each sub-agent (default: 1)!
         "nodes"    : 20,
-        #"walltime" : 30,
-        "walltime" : 45,
+        "walltime" : 90,
         "cpus_node": 42,
         "gpus_node": 6,
         "project"  : "MED110"
     },
-   #"workflows": ["wf2", "wf3fg"]
-   #"workflows": ["wf3"]
-   #"workflows": ["wf1"]
-    "workflows": ["wf3cg", "wf2", "wf3fg"]
+    "workflows": ["wf1", "wf3cg", "wf2", "wf3fg"]
 }

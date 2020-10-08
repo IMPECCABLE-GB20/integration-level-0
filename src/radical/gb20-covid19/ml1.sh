@@ -41,10 +41,21 @@ export data_root=${3}                                # %s' % cfg['data_root'],
 export MPLCONFIGDIR=${12}
 export FONTCONFIG_PATH=/etc/fonts
 
+#bindcmd:
+ncorespersocket=88
+socket=$(( ${device} / 3 ))
+bindcmd="numactl -N $(( ${socket} * 8 ))"
+
+# openmp stuff
+export OMP_PLACES=threads
+
+
+
 cd ${4}                                              # %s' % cfg['base_path']
 
 # unimproved run
-python3 -u infer_images.py \
+${bindcmd} \
+    /gpfs/alpine/ven201/world-shared/tkurth/attention/python_env/conda_attention_cuda-110_py-36/bin/python -u infer_images.py \
     -t 0 \
     -d ${device} \
     -i "${data_root}/images_compressed/*.pkl.gz" \
@@ -58,4 +69,5 @@ python3 -u infer_images.py \
     -b 256 \
     -j 4 \
     -dtype=fp16 \
-    -num_calibration_batches=10 ${1}
+    -num_calibration_batches=10 \
+    --distributed

@@ -121,32 +121,34 @@ if __name__ == '__main__':
         for wf in cfg['workflows']:
             if wf == 'ml1':
                 reporter.header('Submit ML1')
-                ml1_run(appman, cfg_ml1, reporter)
+                counter = 1  
+                ml1_run(appman, cfg_ml1, reporter, counter)
                 reporter.header('ML1 done')
 
             elif wf == 'wf1':
                 reporter.header('Submit S1')
                 # counter = cfg['nvdm']
-                wf1_run(appman, cfg_wf1, reporter, counter)
+                wf1_run(appman, cfg_wf1, reporter, 1)  # FIXME AM
+                # wf1_run(appman, cfg_wf1, reporter, counter)
                 reporter.header('S1 done')
 
             elif wf == 'wf3cg':
                 reporter.header('Submit S3')
                 # get_wf3_input(appman, cfg_wf3)
-                counter = 40
+                counter = 4   # == number of nodes
                 wf3_run(appman, cfg_wf3_cg, reporter, counter)
                 reporter.header('S3cg done')
 
             elif wf == 'wf2':
                 reporter.header('Submit S2')
-                counter = 2
+                counter = 1    # multiple of 20 nodes
                 wf2_run(appman, cfg_wf2, reporter, counter)
                 reporter.header('S2 done')
 
             elif wf == 'wf3fg':
                 reporter.header('Submit S3')
                 # get_wf3_input(appman, cfg_wf3)
-                counter = 10
+                counter = 1    # == number of nodes / 4 
                 wf3_run(appman, cfg_wf3_fg, reporter, counter)
                 reporter.header('S3fg done')
 

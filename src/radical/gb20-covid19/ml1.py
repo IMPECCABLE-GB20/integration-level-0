@@ -61,7 +61,7 @@ def generate_ml1_pipeline(cfg):
     t.cpu_reqs = {
         'processes'          : cfg['processes'],
         'threads_per_process': 4,
-        'thread_type'        : 'OpenMP',
+        'thread_type'        : None,
         'process_type'       : 'MPI'
         }
     t.gpu_reqs = {

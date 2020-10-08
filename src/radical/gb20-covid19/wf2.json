@@ -12,10 +12,10 @@
     "model_type"     : "aae",
 
     "CUR_STAGE"      : 0,
-    "MAX_STAGE"      : 1,
+    "MAX_STAGE"      : 2,
     "RETRAIN_FREQ"   : 1,
     "LEN_initial"    : 1,
-    "LEN_iter"       : 10,
+    "LEN_iter"       : 1,
 
     "conda_path"     : "/gpfs/alpine/proj-shared/med110/conda/openmm",
     "conda_openmm"   : "/gpfs/alpine/proj-shared/med110/conda/openmm",

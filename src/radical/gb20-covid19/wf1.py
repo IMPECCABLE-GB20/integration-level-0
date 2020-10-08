@@ -110,7 +110,6 @@ def generate_pipeline(cfg):
             t = Task()
 
             t.pre_exec = [
-                '. /sw/summit/lmod/lmod/init/profile',
                 '. /gpfs/alpine/scratch/mturilli1/med110/radical.pilot.sandbox/s1.to/bin/activate'
             ]
 
